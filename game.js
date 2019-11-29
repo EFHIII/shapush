@@ -77,8 +77,11 @@ btn.prototype.draw=function(){
     mouseX<(this.x+this.w)*w&&
     mouseY>this.y*h&&
     mouseY<(this.y+this.h)*h){
+      console.log("hover");
       ctx.fillStyle="rgba(0,0,0,50)";
-      document.body.style.cursor='pointer';
+      if(!mobile){
+        document.body.style.cursor='pointer';
+      }
       if(!last&&mouseIsPressed){this.f();last=true;}
   }
   ctx.strokeStyle=colors[0];
@@ -114,7 +117,9 @@ const scenes=[s0,s1];
 //draw
 let lt=0;
 function drawCanvas(t){
-  document.body.style.cursor='default';
+  if(!mobile){
+    document.body.style.cursor='default';
+  }
   ctx.fillStyle="#242729";
   ctx.fillRect(0,0,w,h);
   /*
@@ -134,7 +139,7 @@ function drawCanvas(t){
 
   scenes[scene](tx,ty);
   for(let i=btns.length-1;i>=0;i--){
-    btns[i].draw(tx,ty);
+    btns[i].draw();
   }
   scene=sb;
 
@@ -142,6 +147,10 @@ function drawCanvas(t){
   ctx.font='20px sans-serif';
   ctx.fillText((1000/(t-lt)>>0)+" FPS",40,20);
   lt=t;
+
+  //ctx.fillStyle='red';
+  //ctx.fillRect(mouseX-25,mouseY-25,50,50);
+
   window.requestAnimationFrame(drawCanvas);
 }
 window.requestAnimationFrame(drawCanvas);
@@ -175,20 +184,24 @@ window.onmouseleave = (event)=>{
   last=true;
 }
 
-document.ontouchstart = (event)=>{
+window.ontouchstart = (event)=>{
+  mouseX=event.touches[0].clientX;
+  mouseY=event.touches[0].clientY;
   mouseIsPressed=true;
   last=false;
-  event.preventDefault();
+  for(let i=btns.length-1;i>=0;i--){
+    btns[i].draw();
+  }
 }
 
-document.ontouchend = (event)=>{
+window.ontouchend = (event)=>{
   mouseIsPressed=false;
-  last=false;
-  event.preventDefault();
+  last=true;
 }
 
-document.ontouchmove = (event)=>{
-  event.preventDefault();
-}
+window.ontouchmove = (event) =>{
+  mouseX=event.touches[0].clientX;
+  mouseY=event.touches[0].clientY;
+};
 
 document.addEventListener('contextmenu', event => event.preventDefault());
