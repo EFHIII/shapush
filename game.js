@@ -175,6 +175,18 @@ window.onmouseleave = (event)=>{
   last=true;
 }
 
+document.ontouchstart = (event)=>{
+  mouseIsPressed=true;
+  last=false;
+  event.preventDefault();
+}
+
+document.ontouchend = (event)=>{
+  mouseIsPressed=false;
+  last=false;
+  event.preventDefault();
+}
+
 document.ontouchmove = (event)=>{
   event.preventDefault();
 }
