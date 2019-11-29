@@ -186,14 +186,14 @@ window.onmouseleave = (event)=>{
 window.ontouchstart = (event)=>{
   mouseX=event.touches[0].clientX;
   mouseY=event.touches[0].clientY;
+}
+
+window.ontouchend = (event)=>{
   mouseIsPressed=true;
   last=false;
   for(let i=btns.length-1;i>=0;i--){
     btns[i].draw();
   }
-}
-
-window.ontouchend = (event)=>{
   mouseIsPressed=false;
   last=true;
 }
