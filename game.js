@@ -813,7 +813,7 @@ function s2(tx,ty){
         //button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
 
         if(mobile){
-          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{});
+          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
           button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{});
         }
         else{
@@ -854,7 +854,7 @@ function s2(tx,ty){
       ctx.textAlign='center';
       ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.1*w,0.13*w);
 
-      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{});
+      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{keys[10]=!keys[10]});
       button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{});
 
       button(0,0,0.2*w,0.08*w,()=>{sb=1});
