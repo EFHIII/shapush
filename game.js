@@ -503,7 +503,7 @@ function s0(tx,ty){
   ctx.fillStyle=colors[0];
   ctx.textAlign='left';
   ctx.font=(0.03*min>>0)+"px sans-serif";
-  ctx.fillText("v"+version,5,h-0.01*min);
+  ctx.fillText("v"+version,0.05*w,h-0.01*min);
   ctx.textAlign='center';
   ctx.fillText("By Edward Haas @efhiii",w/2,h-0.01*min);
 }
@@ -818,11 +818,13 @@ window.onmousemove = (event)=>{
 }
 
 window.onmouseup = (event)=>{
-  mouseIsPressed=true;
-  last=false;
-  drawCanvas(false);
-  mouseIsPressed=false;
-  last=true;
+  if(!mobile){
+    mouseIsPressed=true;
+    last=false;
+    drawCanvas(false);
+    mouseIsPressed=false;
+    last=true;
+  }
 }
 
 window.onmouseleave = (event)=>{
