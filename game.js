@@ -4,6 +4,8 @@ const ctx = c.getContext("2d", { alpha: false });
 c.style.backgroundColor="red";
 c.width=window.innerWidth;
 c.height=window.innerHeight;
+
+ctx.textAlign='center';
 //check for mobile
 function isMobile() {
   let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
@@ -104,7 +106,7 @@ btns.push(
     new btn(3,function(){keys[32]=!keys[32];},-150,50,100,500,"G\nr\na\nb","75px serif")
 );
 function button(x,y,w,h,callback){
-  ctx.fillStyle="#151515";
+  ctx.fillStyle=colors[2];
   if(mouseX>x&&
     mouseX<x+w&&
     mouseY>y&&
@@ -121,6 +123,12 @@ function button(x,y,w,h,callback){
 //scenes
 function s0(tx,ty){
   ctx.drawImage(title,tx,ty,min,min);
+  if( window.innerHeight == screen.height) {
+    button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.exitFullscreen()});
+  }
+  else{
+    button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.body.requestFullscreen()});
+  }
   switch(ARType){
     case(1):
       button(0.1*w,0.6*h,0.8*w,0.3*w,()=>{sb=1});
@@ -134,7 +142,6 @@ function s0(tx,ty){
   }
 }
 function s1(tx,ty){
-  ctx.fillStyle='white';
   switch(ARType){
     case(1):
       if(h/w>1.4){
@@ -206,6 +213,7 @@ function s1(tx,ty){
       }
   */
 
+  ctx.font=(0.04*min>>0)+'px sans-serif';
   ctx.fillStyle='black';
   for(var i=0;i<4;i++){
     for(var j=0;j<4;j++){
@@ -213,7 +221,7 @@ function s1(tx,ty){
       switch(ARType){
         case(1):
           //ctx.fillRect(0,ty,min,min);
-
+          ctx.fillStyle='black';
           ctx.fillRect((i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
           lvl=i+j*4+16*levelScreen;
           if(lvl>unlocked){
@@ -222,6 +230,8 @@ function s1(tx,ty){
               //    text(levels[lvl].title,i*130+105,j*130+185);
               //}
           }
+          ctx.fillStyle='white';
+          ctx.fillText("level "+lvl,(i*0.25)*min+0.125*min,ty+(j*0.25)*min+0.125*min);
         break;
         case(2):
           //ctx.fillRect(0,0.15*h,w,h*0.85);
@@ -336,6 +346,8 @@ window.ontouchend = (event)=>{
   drawCanvas();
   mouseIsPressed=false;
   last=true;
+  mouseX=-1;
+  mouseY=-1;
 }
 
 window.ontouchmove = (event) =>{
