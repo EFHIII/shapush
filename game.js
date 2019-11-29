@@ -77,7 +77,6 @@ btn.prototype.draw=function(){
     mouseX<(this.x+this.w)*w&&
     mouseY>this.y*h&&
     mouseY<(this.y+this.h)*h){
-      console.log("hover");
       ctx.fillStyle="rgba(0,0,0,50)";
       if(!mobile){
         document.body.style.cursor='pointer';
@@ -169,12 +168,12 @@ window.onmousemove = (event)=>{
   mouseY=event.clientY;
 }
 
-window.onmousedown = (event)=>{
+window.onmouseup = (event)=>{
   mouseIsPressed=true;
   last=false;
-}
-
-window.onmouseup = (event)=>{
+  for(let i=btns.length-1;i>=0;i--){
+    btns[i].draw();
+  }
   mouseIsPressed=false;
   last=true;
 }
