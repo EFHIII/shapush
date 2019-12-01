@@ -1,3 +1,16 @@
+/*
+TODO:
+graphics:
+asset creation
+- add in blocks
+- make blocks have height
+- only drag things taller than you
+- undo button
+- animation stack
+- remove side-stepping
+- add tutorial
+*/
+
 //initialize canvas
 const c = document.getElementById("canvas");
 const ctx = c.getContext("2d", { alpha: false });
@@ -40,223 +53,165 @@ let unlocked=0;
 let version="0.2";
 let level=0;
 let levels=[
-    {
-        title:"Baby steps",
-        size:{width:4,height:4},
-        start:{x:0,y:0},
-        goal:{x:1,y:3},
-        blocks:[
-            {
-                ramps:[[3,0],[1,2]],
-                squares:[[0,1],[1,1],[2,1],[3,1]]
-            },
-            {
-                ramps:[],
-                squares:[[0,2],[1,2],[2,2],[3,2]]
-            },
-            {
-                ramps:[[3,2]],
-                squares:[[0,3],[1,3],[2,3],[3,3]]
-            },
-        ],
-        stepGoals:[12,14,15],
-        best:0
-    },
-    {
-        title:"Push",
-        size:{width:4,height:4},
-        start:{x:0,y:0},
-        goal:{x:3,y:1},
-        blocks:[
-            {
-                ramps:[[1,0]],
-                squares:[[3,1],[3,2],[3,3]],
-            },
-            {
-                ramps:[],
-                squares:[[0,1],[1,1],[2,1]],
-            },
-        ],
-        stepGoals:[6,7,8],
-        best:0
-    },
-    {
-        title:"Pull",
-        size:{width:4,height:4},
-        start:{x:0,y:0},
-        goal:{x:3,y:2},
-        blocks:[
-            {
-                ramps:[[1,0]],
-                squares:[[1,0],[1,1],[1,2],[0,3],[1,3],[2,3],[3,3]],
-            },
-            {
-                ramps:[[0,1]],
-                squares:[[3,0],[3,1],[3,2]],
-            },
-        ],
-        stepGoals:[8,10,12],
-        best:0
-    },
-    {
-        title:"Drag",
-        size:{width:3,height:3},
-        start:{x:0,y:0},
-        goal:{x:2,y:1},
-        blocks:[
-            {
-                ramps:[[1,0]],
-                squares:[[2,1],[2,2]]
-            },
-            {
-                ramps:[],
-                squares:[[1,1],[1,2]]
-            },
-        ],
-        stepGoals:[7,8,9],
-        best:0
-    },
-    {
-        title:"On top",
-        size:{width:4,height:4},
-        start:{x:0,y:0},
-        goal:{x:0,y:3},
-        blocks:[
-            {
-                ramps:[[3,0],[2,2]],
-                squares:[[0,1],[1,1],[2,1],[3,1]]
-            },
-            {
-                ramps:[],
-                squares:[[0,2],[1,2]]
-            },
-            {
-                ramps:[[3,2]],
-                squares:[[0,3],[1,3],[2,3],[3,3]]
-            },
-        ],
-        stepGoals:[15,17,18],
-        best:0
-    },
-    {
-        title:"Move around",
-        size:{width:6,height:6},
-        start:{x:0,y:0},
-        goal:{x:3,y:3},
-        blocks:[
-            {
-                ramps:[[0,2]],
-                squares:[[2,2],[3,2],[2,3],[3,3]]
-            },
-            {
-                ramps:[[2,0]],
-                squares:[[4,1],[4,2],[4,3],[4,4]]
-            }
-        ],
-        stepGoals:[14,16,20],
-        best:0
-    },
-    {
-        title:"U",
-        size:{width:5,height:5},
-        start:{x:2,y:4},
-        goal:{x:3,y:0},
-        blocks:[
-            {
-                ramps:[],
-                squares:[[1,0],[1,1]],
-            },
-            {
-                ramps:[],
-                squares:[[3,0],[3,1]],
-            },
-            {
-                ramps:[[0,1],[2,2],[3,0]],
-                squares:[[1,2],[3,2],[1,3],[2,3],[3,3]],
-            },
-        ],
-        stepGoals:[19,21,23],
-        best:0
-    },
-    {
-        title:"More complex",
-        size:{width:5,height:5},
-        start:{x:0,y:0},
-        goal:{x:0,y:1},
-        blocks:[
-            {
-                ramps:[],
-                squares:[[2,0],[2,1],[2,2]]
-            },
-            {
-                ramps:[[3,3]],
-                squares:[[0,1],[1,1],[0,2],[1,2]]
-            },
-            {
-                ramps:[[3,0]],
-                squares:[[3,1],[4,1],[3,2],[4,2]]
-            },
-        ],
-        stepGoals:[24,26,28],
-        best:0
-    },
-    {
-        title:"A variation",
-        size:{width:5,height:5},
-        start:{x:0,y:0},
-        goal:{x:2,y:2},
-        blocks:[
-            {
-                ramps:[[0,2]],
-                squares:[[2,0],[2,1],[2,2]]
-            },
-            {
-                ramps:[[1,3]],
-                squares:[[0,1],[0,2],[1,2]]
-            },
-            {
-                ramps:[[2,0]],
-                squares:[[4,1],[3,2],[4,2]]
-            },
-        ],
-        stepGoals:[33,34,36],
-        best:0
-    },
-    {
-        title:"Tight spaces",
-        size:{width:5,height:5},
-        start:{x:0,y:1},
-        goal:{x:1,y:4},
-        blocks:[
-            {
-                ramps:[],
-                squares:[[0,0],[1,0],[1,1]],
-            },
-            {
-                ramps:[[0,0],[1,4]],
-                squares:[[3,0],[4,0],[3,1]],
-            },
-            {
-                ramps:[[0,1]],
-                squares:[[0,3],[1,3],[1,4]],
-            },
-            {
-                ramps:[[1,1]],
-                squares:[[3,3],[4,3],[3,4]],
-            },
-        ],
-        stepGoals:[81,88,98],
-        best:0
-    },
+  {
+    title:"Baby steps",
+    size:{width:4,height:4},
+    start:{x:0,y:0},
+    board:[
+      [[3,-1],[2,-1],[1,-1],[0,-1]],
+      [[3,-1],[2, 1],[1,-1],[0,-2]],
+      [[3,-1],[2,-1],[1,-1],[0,-1]],
+      [[3,-1],[3, 2],[1, 0],[0,-1]],
+    ],
+    stepGoals:[12,14,15],
+    best:0
+  },
+  {
+    title:"Push",
+    size:{width:4,height:4},
+    start:{x:0,y:2},
+    board:[
+      [[2,-2],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[1,-1],[1,-1],[1,-1]],
+      [[2, 0],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[6,7,8],
+    best:0
+  },
+  {
+    title:"Pull",
+    size:{width:4,height:4},
+    start:{x:0,y:3},
+    board:[
+      [[1,-1],[1, 0],[1,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[2,-2],[2,-1],[2, 1],[0,-1]]
+    ],
+    stepGoals:[8,10,12],
+    best:0
+  },
+  {
+    title:"Drag",
+    size:{width:3,height:3},
+    start:{x:0,y:0},
+    board:[
+      [[0,-1],[0,-1],[0,-1]],
+      [[2,-2],[1,-1],[0,-1]],
+      [[2, 0],[1,-1],[0,-1]],
+    ],
+    stepGoals:[7,8,9],
+    best:0
+  },
+  {
+    title:"Grabbing nothing",
+    size:{width:4,height:4},
+    start:{x:2,y:1},
+    board:[
+      [[1,-1],[1,-1],[1,-1],[1,-1]],
+      [[2,-1],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[3, 1],[0,-1],[4,-2]],
+      [[2,-1],[3, 2],[0,-1],[4, 3]]
+    ],
+    stepGoals:[15,17,180],
+    best:0
+  },
+  {
+    title:"On top",
+    size:{width:4,height:4},
+    start:{x:3,y:3},
+    board:[
+      [[4, 2],[4,-2],[2,-1],[0,-1]],
+      [[0,-1],[0,-1],[2,-1],[0,-1]],
+      [[0,-1],[0,-1],[2, 1],[1,-1]],
+      [[3,-1],[3, 2],[0,-1],[1,-1]]
+    ],
+    stepGoals:[15,17,180],
+    best:0
+  },
+  {
+    title:"Move around",
+    size:{width:6,height:6},
+    start:{x:0,y:0},
+    board:[
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[2, 1],[2,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[2,-1],[2,-2],[0,-1],[0,-1]],
+      [[0,-1],[1,-1],[1,-1],[1, 0],[1,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[14,16,20],
+    best:0
+  },
+  {
+    title:"U",
+    size:{width:5,height:5},
+    start:{x:2,y:4},
+    board:[
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[2,-1],[3, 2],[3, 1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[3, 0],[0,-1]],
+      [[1,-2],[1,-1],[3,-1],[3,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[19,21,23],
+    best:0
+  },
+  {
+    title:"More complex",
+    size:{width:5,height:5},
+    start:{x:0,y:0},
+    board:[
+      [[0,-1],[3,-2],[3,-1],[0,-1],[0,-1]],
+      [[0,-1],[3,-1],[3, 2],[0,-1],[0,-1]],
+      [[1,-1],[1,-1],[1,-1],[0,-1],[0,-1]],
+      [[0,-1],[2,-1],[2,-1],[0,-1],[0,-1]],
+      [[0,-1],[2,-1],[2, 0],[0,-1],[0,-1]]
+    ],
+    stepGoals:[24,26,28],
+    best:0
+  },
+  {
+    title:"A variation",
+    size:{width:5,height:5},
+    start:{x:0,y:0},
+    board:[
+      [[0,-1],[2,-1],[2, 1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[2,-1],[0,-1],[0,-1]],
+      [[3, 2],[3,-1],[3,-2],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[1,-1],[0,-1],[0,-1]],
+      [[0,-1],[1,-1],[1, 0],[0,-1],[0,-1]]
+    ],
+    stepGoals:[33,34,36],
+    best:0
+  },
+  {
+    title:"Tight spaces",
+    size:{width:5,height:5},
+    start:{x:0,y:1},
+    board:[
+      [[1,-1],[0,-1],[0,-1],[4, 1],[0,-1]],
+      [[1,-1],[1,-1],[0,-1],[4,-1],[4,-2]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[3, 0],[3,-1],[0,-1],[2,-1],[2,-1]],
+      [[3, 2],[0,-1],[0,-1],[2, 1],[0,-1]]
+    ],
+    stepGoals:[81,88,98],
+    best:0
+  },
 ];
 
 let steps=0;
 let gameGrid=[];
-let blocks=[];
 const player={x:0,y:0,facing:0};
 
 //asset stuff
 const colors=["white","grey","#151515","white","blue"];
+
+const goal=new Image();
+goal.src = 'assets/goal.png';
 
 const title=new Image();
 title.src = 'assets/title.png';
@@ -264,13 +219,78 @@ title.src = 'assets/title.png';
 const groundTile=new Image();
 groundTile.src = 'assets/ground-tile.png';
 
-const tile=new Image();
-tile.src = 'assets/tile.png';
-
 const playerImg=new Image();
 playerImg.src = 'assets/3-powered-rumba.png';
 
-function getPosX(ancor,x,tx){//x is in % of region (0-1)
+const tile1=new Image();
+tile1.src = 'assets/tile-1.png';
+
+const tile2=new Image();
+tile2.src = 'assets/tile-2.png';
+
+const tile3=new Image();
+tile3.src = 'assets/tile-3.png';
+
+const tile4=new Image();
+tile4.src = 'assets/tile-4.png';
+
+const tile5=new Image();
+tile5.src = 'assets/tile-5.png';
+
+const tile6=new Image();
+tile6.src = 'assets/tile-6.png';
+
+const elevatorTile1=new Image();
+elevatorTile1.src = 'assets/elevator-tile-1.png';
+
+const elevatorTile2=new Image();
+elevatorTile2.src = 'assets/elevator-tile-2.png';
+
+const elevatorTile3=new Image();
+elevatorTile3.src = 'assets/elevator-tile-3.png';
+
+const elevatorTile4=new Image();
+elevatorTile4.src = 'assets/elevator-tile-4.png';
+
+const elevatorTile5=new Image();
+elevatorTile5.src = 'assets/elevator-tile-5.png';
+
+const elevatorTile6=new Image();
+elevatorTile6.src = 'assets/elevator-tile-6.png';
+
+const tiles=[
+  {
+    img:groundTile,
+    elevator:groundTile
+  },
+  {
+    img:tile1,
+    elevator:elevatorTile1
+  },
+  {
+    img:tile2,
+    elevator:elevatorTile2
+  },
+  {
+    img:tile3,
+    elevator:elevatorTile3
+  },
+  {
+    img:tile4,
+    elevator:elevatorTile4
+  },
+  {
+    img:tile5,
+    elevator:elevatorTile5
+  },
+  {
+    img:tile6,
+    elevator:elevatorTile6
+  },
+];
+
+//x is in % of region (0-1)
+function getPosX(ancor,x,tx){
   switch(ancor){
     case(0)://middle center square
       return w/2+x*minx/2>>0
@@ -347,59 +367,47 @@ function button(x,y,w,h,callback){
 }
 
 /*game Objects*/
-function block(data,id){
-  this.ramps=data.ramps;
-  this.goal=-1;
-  this.squares=data.squares;
-  this.offset={x:0,y:0};
-  //this.c=bColors[id];
-  this.id=id;
-  for(let i=this.squares.length-1;i>=0;i--){
-    if(levels[level].goal.x===this.squares[i][0]&&levels[level].goal.y===this.squares[i][1]){
-      this.goal=i;
-    }
-    gameGrid[this.squares[i][0]][this.squares[i][1]]=id+1;
-  }
-};
-block.prototype.move=function(x,y){
-  for(var i=0;i<this.squares.length;i++){
-    let X=this.squares[i][0]+this.offset.x+x;
-    let Y=this.squares[i][1]+this.offset.y+y;
-    if(X<0||Y<0||X>=levels[level].size.width||Y>=levels[level].size.height){
-      return false;
-    }
-    let checking=gameGrid[X][Y];
-    if(checking!==0&&checking!==this.id+1){
-      return false;
+function moveBlock(block,x,y){
+  let W=levels[level].size.width;
+  let H=levels[level].size.height;
+  let ar=[];
+  for(let i=W-1;i>=0;i--){
+    for(let j=H-1;j>=0;j--){
+      if(gameGrid[i][j][0]===block&&(i+x<0||j+y<0||i+x>=W||j+y>=H||gameGrid[i+x][j+y][0]&&gameGrid[i+x][j+y][0]!=block)){
+        console.log("at");
+        console.log([i,j]);
+        console.log("move");
+        console.log(block);
+        console.log("over");
+        console.log([x,y]);
+        return;
+      }
+      else if (gameGrid[i][j][0]===block) {
+        ar.push([i,j,gameGrid[i][j][1]]);
+      }
     }
   }
-  for(let i=0;i<this.squares.length;i++){
-    gameGrid[this.squares[i][0]+this.offset.x][this.squares[i][1]+this.offset.y]=0;
+  for(let i=ar.length-1;i>=0;i--){
+      gameGrid[ar[i][0]][ar[i][1]]=[0,0];
   }
-  for(let i=0;i<this.squares.length;i++){
-    gameGrid[this.squares[i][0]+this.offset.x+x][this.squares[i][1]+this.offset.y+y]=this.id+1;
+  for(let i=ar.length-1;i>=0;i--){
+      gameGrid[ar[i][0]+x][ar[i][1]+y]=[block,ar[i][2]];
   }
-  this.offset.x+=x;
-  this.offset.y+=y;
   return true;
-};
+}
 
 //game functions
 function setupLevel(L){
   steps=0;
   gameGrid=[];
-  blocks=[];
   player.x=L.start.x;
   player.y=L.start.y;
   player.facing=0;
   for(var i=0;i<L.size.width;i++){
     gameGrid.push([]);
-    for(var j=L.size.height;j>0;j--){
-      gameGrid[i].push(0);
+    for(var j=0;j<L.size.height;j++){
+      gameGrid[i].push(L.board[i][j]);
     }
-  }
-  for(var i=0;i<L.blocks.length;i++){
-    blocks.push(new block(L.blocks[i],i));
   }
 };
 function imageInSquare(img,x,y,W,H,tx,ty){
@@ -431,31 +439,47 @@ function imageInSquare(img,x,y,W,H,tx,ty){
   }
 };
 function drawPlayer(W,H,tx,ty){
-    imageInSquare(playerImg,W*player.x,H*player.y,W,H,tx,ty);
-    switch(player.facing){
-        case(0):
-            //ellipse(50+W*player.x+W*2/8,75+H*player.y+H*4/7,W*2/10,H*2/10);
-            //ellipse(50+W*player.x+W*6/8,75+H*player.y+H*4/7,W*2/10,H*2/10);
-        break;case(1):
-            //ellipse(50+W*player.x+W*1/7,75+H*player.y+H*6/13,W*2/11,H*2/11);
-            //ellipse(50+W*player.x+W*1/8,75+H*player.y+H*7/13,W*2/10,H*2/10);
-        break;case(2):
-            //ellipse(50+W*player.x+W*2/8,75+H*player.y+H*3/7,W*2/10,H*2/11);
-            //ellipse(50+W*player.x+W*6/8,75+H*player.y+H*3/7,W*2/10,H*2/11);
-            //fill(50,150,250);
-            //ellipse(50+W*player.x+W/2,75+H*player.y+H/2,W*6/10,H*9/10);
-        break;case(3):
-            //ellipse(50+W*player.x+W*6/7,75+H*player.y+H*6/13,W*2/11,H*2/11);
-            //ellipse(50+W*player.x+W*7/8,75+H*player.y+H*7/13,W*2/10,H*2/10);
-        break;
-    }
-    if(keys[32]||keys[10]||keys[13]){}//magnet on
+  //imageInSquare(playerImg,W*(player.x+0.5),H*(player.y+1-gameGrid[player.x][player.y][0]*0.125),W,H,tx,ty);
+  switch(ARType){
+    case(1):
+      ctx.save();
+      ctx.translate(W*(player.x+0.5)*min+0.5*W*min,ty+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*min+0.5*H*min,W*min,H*min);
+      ctx.rotate(player.facing*Math.PI*0.5);
+      ctx.drawImage(playerImg,-0.5*W*min,-0.5*H*min,W*min,H*min);
+      ctx.restore();
+    break;
+    case(2):
+      if(w>h*0.85){
+        //ctx.drawImage(img,0.5*(w-h*0.85)+x*(h*0.85),0.15*h+y*(h*0.85),W*h*0.85,H*h*0.85);
+      }
+      else{
+        //ctx.drawImage(img,x*min,0.15*h+y*min,W*min,H*min);
+      }
+    break;
+    case(3):
+      let mn=0,px=0,py=0;
+      if(min>0.6*w){
+        mn=0.6*w;
+        px=(w-0.6*w)/2;
+        py=(h-0.6*w)/2;
+      }
+      else{
+        mn=min;
+        px=(w-min)/2;
+      }
+      //ctx.drawImage(img,px+mn*x,py+mn*y,mn*W,mn*H);
+    break;
+  }
+  if(keys[32]||keys[10]||keys[13]){}//magnet on
 };
 function movePlayer(x,y){
   steps++;
   let ret=false;
+  let curs=gameGrid[player.x][player.y];
+  let nexs=[0,0];
   if(player.x+x>=0&&player.x+x<levels[level].size.width&&
     player.y+y>=0&&player.y+y<levels[level].size.height){
+    nexs=gameGrid[player.x+x][player.y+y];
     var fc=[0,0];
     switch(player.facing){
         case(0):
@@ -468,115 +492,104 @@ function movePlayer(x,y){
             fc=[1,0];
         break;
     }
-    let rmp=false;
-    let BL=gameGrid[player.x][player.y]>0?blocks[gameGrid[player.x][player.y]-1]:{ramps:[]};
-    for(let i=0;i<BL.ramps.length;i++){
-      if(!BL.ramps[i][1]&&BL.squares[BL.ramps[i][0]][0]+BL.offset.x===player.x&&BL.squares[BL.ramps[i][0]][1]+BL.offset.y===player.y){
-            rmp=true;
-        }
+    let fcns=[0,0];
+    if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<gameGrid.length&&player.y+fc[1]<gameGrid[0].length){
+      fcns=gameGrid[player.x+fc[0]][player.y+fc[1]];
     }
+    let rmp=curs[1]>0;
     if((keys[32]||keys[10]||keys[13])&&(player.x+fc[0]<0||player.y+fc[1]<0||player.x+fc[0]>=levels[level].size.width||player.y+fc[1]>=levels[level].size.height)){
       ret=true;
     }
-    else if((keys[32]||keys[10]||keys[13])&&(gameGrid[player.x][player.y]===gameGrid[player.x+x][player.y+y]||(gameGrid[player.x+fc[0]][player.y+fc[1]]===gameGrid[player.x+x][player.y+y]&&(rmp||!gameGrid[player.x][player.y]))||0===gameGrid[player.x+x][player.y+y]&&(gameGrid[player.x][player.y]===0||rmp))){
-        ret=true;
-        if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
-            let FC=gameGrid[player.x+fc[0]][player.y+fc[1]];
-            if(FC>0&&FC!==gameGrid[player.x][player.y]&&blocks[FC-1].move(x,y)){
-                player.x+=x;
-                player.y+=y;
-                return true;
-            }
-            if(FC!==gameGrid[player.x][player.y]&&FC!==0){
-                steps--;
-                return true;
-            }
+    else if((keys[32]||keys[10]||keys[13])&&(curs[0]===nexs[0]||(fcns[0]===nexs[0]&&(rmp||!curs[0]))||!nexs[0]&&(!curs[0]||rmp))){
+      ret=true;
+      if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
+        if(fcns[0]>0&&fcns[0]!==curs[0]&&moveBlock(fcns[0],x,y)){
+          player.x+=x;
+          player.y+=y;
+          return true;
         }
-    }
-    else if((keys[32]||keys[10]||keys[13])&&gameGrid[player.x+x][player.y+y]>0){
-      let B=blocks[gameGrid[player.x+x][player.y+y]-1];
-      for(var i=0;i<B.ramps.length;i++){
-          if(B.ramps[i][1]===gameGrid[player.x][player.y]&&B.squares[B.ramps[i][0]][0]+B.offset.x===player.x+x&&B.squares[B.ramps[i][0]][1]+B.offset.y===player.y+y){
-              if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
-                  let FC=gameGrid[player.x+fc[0]][player.y+fc[1]];
-                  if(FC>0&&(x!==fc[0]||y!==fc[1])&&FC!==gameGrid[player.x][player.y]&&blocks[FC-1].move(x,y)){
-                      player.x+=x;
-                      player.y+=y;
-                      return true;
-                  }
-                  if(FC!==gameGrid[player.x][player.y]&&FC!==0){
-                      steps--;
-                      return true;
-                  }
-              }
-          }
+        if(fcns[0]!==curs[0]&&fcns[0]!==0){
+          steps--;
+          return true;
+        }
       }
-      if(gameGrid[player.x][player.y]>0){
-            let B=blocks[gameGrid[player.x][player.y]-1];
-            for(let i=0;i<B.ramps.length;i++){
-                if(B.ramps[i][1]===gameGrid[player.x+x][player.y+y]&&B.squares[B.ramps[i][0]][0]+B.offset.x===player.x&&B.squares[B.ramps[i][0]][1]+B.offset.y===player.y){
-                    if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
-                        let FC=gameGrid[player.x+fc[0]][player.y+fc[1]];
-                        if(FC>0&&FC!==gameGrid[player.x+x][player.y+y]&&blocks[FC-1].move(x,y)){
-                            player.x+=x;
-                            player.y+=y;
-                            return true;
-                        }
-                        if(FC!==gameGrid[player.x+x][player.y+y]&&FC!==0){
-                            steps--;
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+    }
+    else if((keys[32]||keys[10]||keys[13])&&nexs[0]>0&&nexs[1]===curs[0]){
+      if(fcns[0]>0&&(x!==fc[0]||y!==fc[1])&&fcns[0]!==curs&&moveBlock(fcns[0],x,y)){
+        player.x+=x;
+        player.y+=y;
+        return true;
+      }
+      if(fcns[0]!==curs[0]&&fcns[0]!==0){
+        steps--;
+        return true;
+      }
+    }
+
+    else if((keys[32]||keys[10]||keys[13])&&curs[0]>0&&nexs[0]===curs[1]){
+      if(fcns[0]>0&&fcns[0]!==nexs&&moveBlock(fcns[0],x,y)){
+        player.x+=x;
+        player.y+=y;
+        return true;
+      }
+      if(fcns[0]!==nexs[0]&&fcns[0]!==0){
+        steps--;
+        return true;
+      }
     }
     if(keys[32]||keys[10]||keys[13]){ret=true;}
-    if(gameGrid[player.x][player.y]===gameGrid[player.x+x][player.y+y]){
+    if(player.x+x<0||player.x+x>=levels[level].size.width||
+    player.y+y<0||player.y+y>=levels[level].size.height){
+      if(ret){steps--;return true;}
+      return;
+    }
+    if(curs[0]===nexs[0]){
         player.x+=x;
         player.y+=y;
         return ret;
     }
-    if(gameGrid[player.x+x][player.y+y]>0){
-        var B=blocks[gameGrid[player.x+x][player.y+y]-1];
-        for(var i=0;i<B.ramps.length;i++){
-            if(B.ramps[i][1]===gameGrid[player.x][player.y]&&B.squares[B.ramps[i][0]][0]+B.offset.x===player.x+x&&B.squares[B.ramps[i][0]][1]+B.offset.y===player.y+y){
-                player.x+=x;
-                player.y+=y;
-                return ret;
-            }
-        }
+    if(nexs[0]>0&&nexs[1]===curs[0]){
+      player.x+=x;
+      player.y+=y;
+      return ret;
     }
-    if(gameGrid[player.x][player.y]>0){
-          var B=blocks[gameGrid[player.x][player.y]-1];
-          for(var i=0;i<B.ramps.length;i++){
-              if(B.ramps[i][1]===gameGrid[player.x+x][player.y+y]&&B.squares[B.ramps[i][0]][0]+B.offset.x===player.x&&B.squares[B.ramps[i][0]][1]+B.offset.y===player.y){
-                  player.x+=x;
-                  player.y+=y;
-                  return ret;
-              }
-          }
-      }
+    if(curs[0]>0&&nexs[0]===curs[1]){
+      player.x+=x;
+      player.y+=y;
+      return ret;
+  }
   }
   if(ret){steps--;return true;}
 };
 function drawBoard(L,tx,ty){
-  var W=1/L.size.width,H=1/L.size.height;
+  var W=1/(L.size.width+1),H=1/(L.size.height+1);
   for(var i=L.size.width-1;i>=0;i--){
     for(var j=L.size.height-1;j>=0;j--){
       //rect(50+W*i,75+H*j,W,H);
-      imageInSquare(groundTile,W*i,H*j,W,H,tx,ty);
+      //imageInSquare(groundTile,W*i,H*j,W,H,tx,ty);
+      imageInSquare(groundTile,W*(i+0.5),H*(j+1),W,H,tx,ty);
     }
   }
-  for(var i=gameGrid.length-1;i>=0;i--){
-    for(var j=gameGrid[i].length-1;j>=0;j--){
+  for(var j=0;j<L.size.height;j++){
+    for(var i=gameGrid.length-1;i>=0;i--){
+      //drawBlock(blocks[gameGrid[i][j]-1],i,j,W,H);switch(ARType){
       if(gameGrid[i][j]){
-        //drawBlock(blocks[gameGrid[i][j]-1],i,j,W,H);switch(ARType){
-        imageInSquare(tile,W*i,H*j,W,H,tx,ty);
+        if(gameGrid[i][j][1]>=0){
+          imageInSquare(tiles[gameGrid[i][j][1]].img,W*(i+0.5),H*(j+1-gameGrid[i][j][1]*0.125),W,H*(1+gameGrid[i][j][1]*0.125),tx,ty);
+          imageInSquare(tiles[gameGrid[i][j][0]].elevator,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H*(1+gameGrid[i][j][0]*0.125),tx,ty);
+        }
+        else{
+          imageInSquare(tiles[gameGrid[i][j][0]].img,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H*(1+gameGrid[i][j][0]*0.125),tx,ty);
+        }
+        if(gameGrid[i][j][1]===-2){
+          imageInSquare(goal,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H,tx,ty);
+        }
       }
     }
+    if(player.y===j){
+      drawPlayer(W,H,tx,ty);
+    }
   }
-  drawPlayer(W,H,tx,ty);
 }
 
 //scenes
@@ -688,7 +701,7 @@ function s1(tx,ty){
             });
           }
           ctx.fillStyle='white';
-          ctx.fillText("level "+(lvl+1),((i+0.5)*0.25)*min>>0,ty+((j+0.96)*0.25)*min>>0);
+          ctx.fillText(lvl<levels.length?levels[lvl].title:"",((i+0.5)*0.25)*min>>0,ty+((j+0.96)*0.25)*min>>0);
         break;
         case(2):
           ctx.fillStyle='black';
@@ -742,10 +755,10 @@ function s1(tx,ty){
 
           ctx.fillStyle='white';
           if(w>h*0.85){
-            ctx.fillText("level "+(lvl+1),(w-h*0.85)/2+((i+0.5)*0.25)*(h*0.85)>>0,0.15*h+((j+0.96)*0.25)*(h*0.85)>>0);
+            ctx.fillText(lvl<levels.length?levels[lvl].title:"",(w-h*0.85)/2+((i+0.5)*0.25)*(h*0.85)>>0,0.15*h+((j+0.96)*0.25)*(h*0.85)>>0);
           }
           else{
-            ctx.fillText("level "+(lvl+1),(i*0.25)*min+0.125*min>>0,0.15*h+((j+0.96)*0.25)*min>>0);
+            ctx.fillText(lvl<levels.length?levels[lvl].title:"",(i*0.25)*min+0.125*min>>0,0.15*h+((j+0.96)*0.25)*min>>0);
           }
 
         break;
@@ -795,7 +808,7 @@ function s1(tx,ty){
             });
           }
           ctx.fillStyle='white';
-          ctx.fillText("level "+(lvl+1),px+(i*0.25)*mn+0.125*mn,py+(j*0.25)*mn+0.24*mn);
+          ctx.fillText(lvl<levels.length?levels[lvl].title:"",px+(i*0.25)*mn+0.125*mn,py+(j*0.25)*mn+0.24*mn);
         break;
       }
     }
@@ -805,9 +818,14 @@ function s2(tx,ty){
   ctx.fillStyle=colors[0];
   switch(ARType){
     case(1):
-      ctx.font=(min/8>>0)+"px sans-serif";
+      ctx.font=(min/10>>0)+"px sans-serif";
       ctx.textAlign='center';
-      ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.5*w,0.2*(h-min)+min/16);
+      ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.5*w,0.1*(h-min)+min/16);
+
+      if(levels[level].best){
+        ctx.font=(min/20>>0)+"px sans-serif";
+        ctx.fillText("best: "+levels[level].best,0.5*w,0.25*(h-min)+min/16);
+      }
       if(h/w>1.4){
         //button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
         //button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
@@ -862,11 +880,13 @@ function s2(tx,ty){
   }
   drawBoard(levels[level],tx,ty);
   //if(levels[level].stepGoals[2]-steps<=0){setupLevel(levels[level]);}
-  if(levels[level].best){
-    ctx.font=(min/10>>0)+"px sans-serif";
-    ctx.textAlign='right';
-    ctx.fillText("best: "+levels[level].best,0.95*w,0.1*min);
-  }
+
+  //if(levels[level].best){
+  //  ctx.font=(min/10>>0)+"px sans-serif";
+  //  ctx.textAlign='right';
+  //  ctx.fillText("best: "+levels[level].best,0.95*w,0.1*min);
+  //}
+
   //image(resetImg,136,16,40,40);
 }
 let scene=0,sb=0;
@@ -916,14 +936,14 @@ window.requestAnimationFrame(drawCanvas);
 
 //event listeners
 var beatLevel=function(){
-    if(levels[level].stepGoals[2]-steps<=0){setupLevel(levels[level]);return;}
-    drawCanvas(false);
-    if(!levels[level].best||levels[level].best>steps){
-        levels[level].best=steps?steps:levels[level].stepGoals[2];
-    }
-    sb=1;
+  if(levels[level].stepGoals[2]-steps<0){setupLevel(levels[level]);return;}
+  drawCanvas(false);
+  if(!levels[level].best||levels[level].best>steps){
+    levels[level].best=steps?steps:levels[level].stepGoals[2];
+  }
+  sb=1;
 
-    if(level===unlocked&&unlocked+1<levels.length){unlocked++;}
+  if(level===unlocked&&unlocked+1<levels.length){unlocked++;}
 };
 
 window.onresize = ()=>{
@@ -968,11 +988,8 @@ window.onkeydown = (event)=>{
         }
       break;
     }
-    if(gameGrid[player.x][player.y]>0){
-      var BL=blocks[gameGrid[player.x][player.y]-1];
-      if(BL.goal>=0&&player.x===BL.squares[BL.goal][0]+BL.offset.x&&player.y===BL.squares[BL.goal][1]+BL.offset.y){
-        beatLevel();
-      }
+    if(gameGrid[player.x][player.y][1]===-2){
+      beatLevel();
     }
   }
 }
@@ -1008,9 +1025,7 @@ window.ontouchstart = (event)=>{
   ltouch=[mouseX,mouseY];
 }
 window.ontouchend = (event)=>{
-  console.log((mouseX-ltouch[0])*(mouseX-ltouch[0])+(mouseY-ltouch[1])*(mouseY-ltouch[1]));
   if((mouseX-ltouch[0])*(mouseX-ltouch[0])+(mouseY-ltouch[1])*(mouseY-ltouch[1])>200){
-    console.log(1);
     let beforeMove=player.x+","+player.y;
     if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])<-2){
       if(!movePlayer(-1,0)){
@@ -1037,11 +1052,9 @@ window.ontouchend = (event)=>{
       }
     }
 
-    if(gameGrid[player.x][player.y]>0){
-      var BL=blocks[gameGrid[player.x][player.y]-1];
-      if(BL.goal>=0&&player.x===BL.squares[BL.goal][0]+BL.offset.x&&player.y===BL.squares[BL.goal][1]+BL.offset.y){
-        beatLevel();
-      }
+
+    if(gameGrid[player.x][player.y][1]===-2){
+      beatLevel();
     }
   }
 
