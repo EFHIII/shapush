@@ -2,9 +2,17 @@
 TODO:
 graphics:
 asset creation
-- add in blocks
-- make blocks have height
-- only drag things taller than you
+x add in blocks
+x make blocks have height
+- shell bots
+- animation stack
+  - rotate player
+  - move player
+  - move block
+  - move power
+  - win
+- only drag things higher than you
+- other mechanics sepcific to the new visuals
 - undo button
 - animation stack
 - remove side-stepping
@@ -50,7 +58,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.2";
+let version="0.2.1";
 let level=0;
 let levels=[
   {
@@ -374,12 +382,6 @@ function moveBlock(block,x,y){
   for(let i=W-1;i>=0;i--){
     for(let j=H-1;j>=0;j--){
       if(gameGrid[i][j][0]===block&&(i+x<0||j+y<0||i+x>=W||j+y>=H||gameGrid[i+x][j+y][0]&&gameGrid[i+x][j+y][0]!=block)){
-        console.log("at");
-        console.log([i,j]);
-        console.log("move");
-        console.log(block);
-        console.log("over");
-        console.log([x,y]);
         return;
       }
       else if (gameGrid[i][j][0]===block) {
@@ -443,17 +445,26 @@ function drawPlayer(W,H,tx,ty){
   switch(ARType){
     case(1):
       ctx.save();
-      ctx.translate(W*(player.x+0.5)*min+0.5*W*min,ty+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*min+0.5*H*min,W*min,H*min);
+      ctx.translate(W*(player.x+0.5)*min+0.5*W*min,ty+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*min+0.5*H*min);
       ctx.rotate(player.facing*Math.PI*0.5);
       ctx.drawImage(playerImg,-0.5*W*min,-0.5*H*min,W*min,H*min);
       ctx.restore();
     break;
     case(2):
       if(w>h*0.85){
-        //ctx.drawImage(img,0.5*(w-h*0.85)+x*(h*0.85),0.15*h+y*(h*0.85),W*h*0.85,H*h*0.85);
+        ctx.save();
+        ctx.translate(0.5*(w-h*0.85)+W*(player.x+0.5)*h*0.85+0.5*W*h*0.85,
+        0.15*h+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*h*0.85+0.5*H*h*0.85);
+        ctx.rotate(player.facing*Math.PI*0.5);
+        ctx.drawImage(playerImg,-0.5*W*h*0.85,-0.5*H*h*0.85,W*h*0.85,H*h*0.85);
+        ctx.restore();
       }
       else{
-        //ctx.drawImage(img,x*min,0.15*h+y*min,W*min,H*min);
+        ctx.save();
+        ctx.translate(W*(player.x+0.5)*min+0.5*W*min,0.15*h+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*min+0.5*H*min);
+        ctx.rotate(player.facing*Math.PI*0.5);
+        ctx.drawImage(playerImg,-0.5*W*min,-0.5*H*min,W*min,H*min);
+        ctx.restore();
       }
     break;
     case(3):
@@ -467,7 +478,11 @@ function drawPlayer(W,H,tx,ty){
         mn=min;
         px=(w-min)/2;
       }
-      //ctx.drawImage(img,px+mn*x,py+mn*y,mn*W,mn*H);
+      ctx.save();
+      ctx.translate(px+W*(player.x+0.5)*mn+0.5*mn*W,py+H*(player.y+1-gameGrid[player.x][player.y][0]*0.125)*mn+0.5*mn*H);
+      ctx.rotate(player.facing*Math.PI*0.5);
+      ctx.drawImage(playerImg,-0.5*mn*W,-0.5*mn*H,mn*W,mn*H);
+      ctx.restore();
     break;
   }
   if(keys[32]||keys[10]||keys[13]){}//magnet on
