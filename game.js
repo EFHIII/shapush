@@ -60,7 +60,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.2.1";
+let version="0.2.2";
 let level=0;
 let levels=[
   {
@@ -95,11 +95,11 @@ let levels=[
     title:"Pull",
     size:{width:4,height:4},
     start:{x:0,y:3},
-    shells:[],
+    shells:[{x:0,y:0,z:2,facing:0},{x:1,y:2,z:1,facing:0}],
     board:[
-      [[2,-2],[0,-1],[1,-1],[0,-1]],
-      [[2,-1],[0,-1],[1, 0],[0,-1]],
       [[2, 1],[0,-1],[1,-1],[0,-1]],
+      [[2,-1],[0,-1],[1, 0],[0,-1]],
+      [[2,-2],[0,-1],[1,-1],[0,-1]],
       [[1,-1],[1,-1],[1,-1],[1,-1]]
     ],
     stepGoals:[8,10,12],
@@ -109,11 +109,11 @@ let levels=[
     title:"Drag",
     size:{width:3,height:3},
     start:{x:0,y:0},
-    shells:[],
+    shells:[{x:2,y:2,z:2,facing:0}],
     board:[
       [[0,-1],[0,-1],[0,-1]],
-      [[2,-2],[1,-1],[0,-1]],
-      [[2, 0],[1,-1],[0,-1]],
+      [[0,-1],[1,-1],[1,-1]],
+      [[0,-1],[2,-2],[2, 0]],
     ],
     stepGoals:[7,8,9],
     best:0
@@ -122,7 +122,7 @@ let levels=[
     title:"Grabbing nothing",
     size:{width:4,height:4},
     start:{x:2,y:1},
-    shells:[],
+    shells:[{x:3,y:1,z:2,facing:0},{x:2,y:1,z:1,facing:0},{x:3,y:3,z:4,facing:0}],
     board:[
       [[1,-1],[1,-1],[1,-1],[1,-1]],
       [[2,-1],[0,-1],[0,-1],[0,-1]],
@@ -374,68 +374,6 @@ const tiles=[
   },
 ];
 
-//x is in % of region (0-1)
-function getPosX(ancor,x,tx){
-  switch(ancor){
-    case(0)://middle center square
-      return w/2+x*minx/2>>0
-    case(1)://top left
-    case(3)://bottom left
-    case(5)://top
-    case(8)://bottom
-      return x*w>>0
-    case(2)://top right
-    case(4)://bottom right
-      return w-x*w>>0
-    case(6)://left
-      return x*(w-minx)/2>>0
-    case(7)://right
-      return w-x*(w/2-minx)>>0
-  }
-}
-
-//buttons
-const btns=[];
-function btn(ARType,sc,f,x,y,w,h){
-  this.ARType=ARType;
-  this.sc=sc;
-  this.f=f;//function when clicked
-  this.x=x;
-  this.y=y;
-  this.w=w;//width
-  this.h=h;//height
-}
-btn.prototype.draw=function(){
-  if(scene!==this.sc||ARType!==this.ARType){return;}
-  ctx.textAlign='center';
-  ctx.fillStyle=colors[2];
-  if(mouseX>this.x*w&&
-    mouseX<(this.x+this.w)*w&&
-    mouseY>this.y*h&&
-    mouseY<(this.y+this.h)*h){
-      ctx.fillStyle="rgba(0,0,0,50)";
-      document.body.style.cursor='pointer';
-      if(!last&&mouseIsPressed){this.f();last=true;}
-  }
-  ctx.strokeStyle=colors[0];
-  ctx.fillRect(this.x*w>>0,this.y*h>>0,this.w*w>>0,this.h*h>>0);
-}
-btns.push(
-    //new btn(1,0,function(){sb=1;},0.1,0.7,0.8,0.15),
-    //new btn(1,2,function(){sb=1;levelScreen=0;},0.01,0.01,0.3,0.08),
-    //new btn(1,1,function(){sb=0;},0.01,0.01,0.3,0.08),
-
-    //new btn(2,0,function(){sb=1;},0.2,0.6,0.6,0.2),
-    //new btn(2,2,function(){sb=1;levelScreen=0;},0.02,0.02,0.18,0.08),
-    //new btn(2,1,function(){sb=0;},0.02,0.02,0.18,0.08),
-
-    //new btn(3,0,function(){sb=1;},0.3,0.6,0.4,0.2),
-    //new btn(3,2,function(){sb=1;levelScreen=0;},0.02,0.02,0.15,0.1),
-    //new btn(3,1,function(){sb=0;},0.02,0.02,0.15,0.1),
-    //new btn(2,function(){setupLevel(levels[level]);},130,10,50,50,""),
-    //new btn(2,function(){keys[32]=!keys[32];},50,650,500,100,"Grab","100px serif"),
-    //new btn(3,function(){keys[32]=!keys[32];},-150,50,100,500,"G\nr\na\nb","75px serif")
-);
 function button(x,y,w,h,callback){
   ctx.fillStyle=colors[2];
   if(mouseX>x&&
@@ -505,7 +443,6 @@ function animate(){
         player.x=animationQueue[0][1];
         player.y=animationQueue[0][2];
         animationQueue.shift();
-        //player.z=gameGrid[player.x][player.y][0];
         if(gameGrid[player.x][player.y][1]===-2){
           beatLevel();
         }
@@ -531,15 +468,21 @@ function animate(){
       }
 
       animationQueue[0][5]+=0.1;
+      for(let k=0;k<animationQueue[0][6].length;k++){
+          shells[animationQueue[0][6][k]].x+=animationQueue[0][2]*0.1;
+          shells[animationQueue[0][6][k]].y+=animationQueue[0][3]*0.1;
+      }
       if(animationQueue[0][5]>=1){
         for(let i=animationQueue[0][4].length-1;i>=0;i--){
           gameGrid[animationQueue[0][4][i][0]+animationQueue[0][2]][animationQueue[0][4][i][1]+animationQueue[0][3]]=[animationQueue[0][1],animationQueue[0][4][i][2]];
+        }for(let k=0;k<animationQueue[0][6].length;k++){
+            shells[animationQueue[0][6][k]].x=Math.round(shells[animationQueue[0][6][k]].x);
+            shells[animationQueue[0][6][k]].y=Math.round(shells[animationQueue[0][6][k]].y);
         }
         animationQueue.shift();
         player.x=animationQueue[0][1];
         player.y=animationQueue[0][2];
         animationQueue.shift();
-        player.z=gameGrid[player.x][player.y][0];
         if(gameGrid[player.x][player.y][1]===-2){
           beatLevel();
         }
@@ -553,6 +496,7 @@ function moveBlock(block,x,y){
   let W=levels[level].size.width;
   let H=levels[level].size.height;
   let ar=[];
+  let shellsOn=[];
   for(let i=W-1;i>=0;i--){
     for(let j=H-1;j>=0;j--){
       if(gameGrid[i][j][0]===block&&(i+x<0||j+y<0||i+x>=W||j+y>=H||gameGrid[i+x][j+y][0]&&gameGrid[i+x][j+y][0]!=block)){
@@ -560,13 +504,16 @@ function moveBlock(block,x,y){
       }
       else if (gameGrid[i][j][0]===block) {
         ar.push([i,j,gameGrid[i][j][1]]);
+        for(let k=0;k<shells.length;k++){
+          if(shells[k].x===i&&shells[k].y===j){
+            shellsOn.push(k);
+          }
+        }
       }
     }
   }
-  animationQueue.push(["moveBlock",block,x,y,ar,0]);
-  //for(let i=ar.length-1;i>=0;i--){
-  //    gameGrid[ar[i][0]+x][ar[i][1]+y]=[block,ar[i][2]];
-  //}
+
+  animationQueue.push(["moveBlock",block,x,y,ar,0,shellsOn]);
   return true;
 }
 
@@ -619,7 +566,6 @@ function imageInSquare(img,x,y,W,H,tx,ty){
   }
 }
 function drawPlayer(x,y,z,facing,W,H,tx,ty,playerImg,clpx,clp){
-  //imageInSquare(playerImg,W*(player.x+0.5),H*(player.y+1-gameGrid[player.x][player.y][0]*0.125),W,H,tx,ty);
   switch(ARType){
     case(1):
       ctx.save();
@@ -843,12 +789,14 @@ function movePlayer(x,y){
   if(player.x+x>=0&&player.x+x<levels[level].size.width&&
     player.y+y>=0&&player.y+y<levels[level].size.height){
     nexs=gameGrid[player.x+x][player.y+y];
+    if(nexs[1]===player.z){
+      nexs=[nexs[1],-1];
+    }
   }
   else{
     return ret;
   }
 
-  //if(ret){steps--;return true;}
   if(ret&&(player.z===nexs[0]||(fcns[0]===nexs[0]&&!player.z))){
     if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
       if(fcns[0]>0&&fcns[0]!==curs[0]&&moveBlock(fcns[0],x,y)){
@@ -871,8 +819,6 @@ function drawBoard(L,tx,ty){
   var W=1/(L.size.width+1),H=1/(L.size.height+1);
   for(let i=L.size.width-1;i>=0;i--){
     for(let j=L.size.height-1;j>=0;j--){
-      //rect(50+W*i,75+H*j,W,H);
-      //imageInSquare(groundTile,W*i,H*j,W,H,tx,ty);
       imageInSquare(groundTile,W*(i+0.5),H*(j+1),W,H,tx,ty);
     }
   }
@@ -883,9 +829,8 @@ function drawBoard(L,tx,ty){
       bots.push([]);
     }
     for(let sl=0;sl<shells.length;sl++){
-      if(shells[sl].y===j){
+      if(Math.ceil(shells[sl].y)===j||Math.floor(shells[sl].y)===j){
         bots[shells[sl].x].push([shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg]);
-        //drawPlayer(shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg);
       }
     }
     if(Math.ceil(player.y)===j||Math.floor(player.y)===j){
@@ -912,13 +857,24 @@ function drawBoard(L,tx,ty){
       }
     }
     for(let i=gameGrid.length-1;i>=0;i--){
-      //drawBlock(blocks[gameGrid[i][j]-1],i,j,W,H);switch(ARType){
+      let nd=-1;
       if(animationQueue.length>0&&animationQueue[0][0]==='moveBlock'){
         for(let k=0;k<animationQueue[0][4].length;k++){
           if(animationQueue[0][4][k][0]===i&&animationQueue[0][4][k][1]===j){
             if(animationQueue[0][4][k][2]>=0){
               if(animationQueue[0][4][k][2]>0){
-                imageInSquare(tiles[animationQueue[0][4][k][2]].img,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][4][k][2]*0.125),W,H*(1+animationQueue[0][4][k][2]*0.125),tx,ty);
+                  imageInSquare(tiles[animationQueue[0][4][k][2]].img,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][4][k][2]*0.125),W,H*(1+animationQueue[0][4][k][2]*0.125),tx,ty);
+                  imageInSquare(tiles[animationQueue[0][1]].wall,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+2-animationQueue[0][4][k][2]*0.125),W,H*(animationQueue[0][4][k][2]*0.125),tx,ty);
+              }
+              for(let s=0;s<bots[i].length;s++){
+                if(bots[i][s][2]<animationQueue[0][1]){
+                  drawPlayer(...bots[i][s]);
+                  bots[i].splice(s,1);
+                  s--;
+                }
+                else if(bots[i][s][1]+animationQueue[0][5]===1||bots[i][s][1]===animationQueue[0][5]){
+                  nd=s;
+                }
               }
               imageInSquare(tiles[animationQueue[0][4][k][2]].elevatorTube,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][1]*0.125),W,H,tx,ty);
               imageInSquare(tiles[animationQueue[0][1]].elevator,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][1]*0.125),W,H*(1+animationQueue[0][1]*0.125),tx,ty);
@@ -931,6 +887,10 @@ function drawBoard(L,tx,ty){
             }
           }
         }
+      }
+      if(nd>=0){
+        drawPlayer(...bots[i][nd]);
+        bots[i].splice(nd,1);
       }
       if(gameGrid[i][j][0]){
         if(gameGrid[i][j][1]>=0){
@@ -1037,12 +997,10 @@ function s1(tx,ty){
       let lvl,onL;
       switch(ARType){
         case(1):
-          //ctx.fillRect(0,ty,min,min);
           ctx.fillStyle='black';
           lvl=i+j*4+16*levelScreen;
           if(lvl>unlocked){
             ctx.fillRect((i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
-            //image(lockedImg,i*130+45,j*130+80,120,120);
           }
           else{
             onL=levels[lvl];
@@ -1133,7 +1091,6 @@ function s1(tx,ty){
         break;
         case(3):
           ctx.fillStyle='black';
-          //ctx.fillRect(0.2*w,0,0.6*w,min);
           let mn=0,px=0,py=0;
           if(min>0.6*w){
             mn=0.6*w;
@@ -1248,15 +1205,6 @@ function s2(tx,ty){
     break;
   }
   drawBoard(levels[level],tx,ty);
-  //if(levels[level].stepGoals[2]-steps<=0){setupLevel(levels[level]);}
-
-  //if(levels[level].best){
-  //  ctx.font=(min/10>>0)+"px sans-serif";
-  //  ctx.textAlign='right';
-  //  ctx.fillText("best: "+levels[level].best,0.95*w,0.1*min);
-  //}
-
-  //image(resetImg,136,16,40,40);
   animate();
 }
 let scene=0,sb=0;
@@ -1285,9 +1233,6 @@ function drawCanvas(t){
   }
 
   scenes[scene](tx,ty);
-  for(let i=btns.length-1;i>=0;i--){
-    btns[i].draw();
-  }
   scene=sb;
 
   ctx.fillStyle='white';
@@ -1296,8 +1241,6 @@ function drawCanvas(t){
   ctx.fillText((1000/(t-lt)>>0)+" FPS",5,20);
   lt=t;
 
-  //ctx.fillStyle='red';
-  //ctx.fillRect(mouseX-25,mouseY-25,50,50);
   if(t){
     window.requestAnimationFrame(drawCanvas);
     counter++;
@@ -1335,7 +1278,6 @@ window.onkeydown = (event)=>{
     while(animationQueue.length>0){
       animate();
     }
-    //if(animationQueue.length>0){return}
     switch(event.keyCode){
       case(90)://Z
         for(let i=0;i<shells.length;i++){
@@ -1349,7 +1291,6 @@ window.onkeydown = (event)=>{
       case(65):
         if(!movePlayer(-1,0)){
           if(player.facing===1&&animationQueue.length===0){steps--;}
-          //player.facing=1;
           animationQueue.unshift(["facing",1]);
         }
       break;
@@ -1357,7 +1298,6 @@ window.onkeydown = (event)=>{
       case(68):
         if(!movePlayer(1,0)){
           if(player.facing===3&&animationQueue.length===0){steps--;}
-          //player.facing=3;
           animationQueue.unshift(["facing",3]);
         }
       break;
@@ -1365,7 +1305,6 @@ window.onkeydown = (event)=>{
       case(87):
         if(!movePlayer(0,-1)){
           if(player.facing===2&&animationQueue.length===0){steps--;}
-          //player.facing=2;
           animationQueue.unshift(["facing",2]);
         }
       break;
@@ -1373,7 +1312,6 @@ window.onkeydown = (event)=>{
       case(83):
         if(!movePlayer(0,1)){
           if(player.facing===0&&animationQueue.length===0){steps--;}
-          //player.facing=0;
           animationQueue.unshift(["facing",0]);
         }
       break;
@@ -1420,28 +1358,24 @@ window.ontouchend = (event)=>{
     if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])<-2){
       if(!movePlayer(-1,0)){
         if(player.facing===1&&animationQueue.length===0){steps--;}
-        //player.facing=1;
         animationQueue.splice(animationQueue.length-1,0,["facing",1]);
       }
     }
     else if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])>2){
       if(!movePlayer(1,0)){
         if(player.facing===3&&animationQueue.length===0){steps--;}
-        //player.facing=3;
         animationQueue.splice(animationQueue.length-1,0,["facing",3]);
       }
     }
     else if((mouseY-ltouch[1])/Math.abs(mouseX-ltouch[0])<-2){
       if(!movePlayer(0,-1)){
         if(player.facing===2&&animationQueue.length===0){steps--;}
-        //player.facing=2;
         animationQueue.splice(animationQueue.length-1,0,["facing",2]);
       }
     }
     else if((mouseY-ltouch[1])/Math.abs(mouseX-ltouch[0])>2){
       if(!movePlayer(0,1)){
         if(player.facing===0&&animationQueue.length===0){steps--;}
-        //player.facing=0;
         animationQueue.splice(animationQueue.length-1,0,["facing",0]);
       }
     }
