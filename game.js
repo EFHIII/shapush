@@ -2,7 +2,7 @@
 TODO:
 graphics:
 asset creation
-- shell bots
+x shell bots
 - animation stack
   x rotate player
   x move player
@@ -17,6 +17,8 @@ asset creation
 - remove side-stepping
 - add tutorial
 - BUG: moving after transporting before animation is done
+- fix levels
+- add levels
 */
 
 //initialize canvas
@@ -79,6 +81,7 @@ let levels=[
     title:"Push",
     size:{width:4,height:4},
     start:{x:0,y:2},
+    shells:[{x:2,y:0,z:2,facing:0}],
     board:[
       [[2,-2],[0,-1],[0,-1],[0,-1]],
       [[2,-1],[1,-1],[1,-1],[1,-1]],
@@ -92,11 +95,12 @@ let levels=[
     title:"Pull",
     size:{width:4,height:4},
     start:{x:0,y:3},
+    shells:[],
     board:[
-      [[1,-1],[1, 0],[1,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0,-1]],
-      [[2,-2],[2,-1],[2, 1],[0,-1]]
+      [[2,-2],[0,-1],[1,-1],[0,-1]],
+      [[2,-1],[0,-1],[1, 0],[0,-1]],
+      [[2, 1],[0,-1],[1,-1],[0,-1]],
+      [[1,-1],[1,-1],[1,-1],[1,-1]]
     ],
     stepGoals:[8,10,12],
     best:0
@@ -105,6 +109,7 @@ let levels=[
     title:"Drag",
     size:{width:3,height:3},
     start:{x:0,y:0},
+    shells:[],
     board:[
       [[0,-1],[0,-1],[0,-1]],
       [[2,-2],[1,-1],[0,-1]],
@@ -117,6 +122,7 @@ let levels=[
     title:"Grabbing nothing",
     size:{width:4,height:4},
     start:{x:2,y:1},
+    shells:[],
     board:[
       [[1,-1],[1,-1],[1,-1],[1,-1]],
       [[2,-1],[0,-1],[0,-1],[0,-1]],
@@ -130,6 +136,7 @@ let levels=[
     title:"On top",
     size:{width:4,height:4},
     start:{x:3,y:3},
+    shells:[],
     board:[
       [[4, 2],[4,-2],[2,-1],[0,-1]],
       [[0,-1],[0,-1],[2,-1],[0,-1]],
@@ -143,6 +150,7 @@ let levels=[
     title:"Move around",
     size:{width:6,height:6},
     start:{x:0,y:0},
+    shells:[],
     board:[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
@@ -158,6 +166,7 @@ let levels=[
     title:"U",
     size:{width:5,height:5},
     start:{x:2,y:4},
+    shells:[],
     board:[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
       [[2,-1],[2,-1],[3, 2],[3, 1],[0,-1]],
@@ -172,6 +181,7 @@ let levels=[
     title:"More complex",
     size:{width:5,height:5},
     start:{x:0,y:0},
+    shells:[],
     board:[
       [[0,-1],[3,-2],[3,-1],[0,-1],[0,-1]],
       [[0,-1],[3,-1],[3, 2],[0,-1],[0,-1]],
@@ -186,6 +196,7 @@ let levels=[
     title:"A variation",
     size:{width:5,height:5},
     start:{x:0,y:0},
+    shells:[],
     board:[
       [[0,-1],[2,-1],[2, 1],[0,-1],[0,-1]],
       [[0,-1],[0,-1],[2,-1],[0,-1],[0,-1]],
@@ -200,6 +211,7 @@ let levels=[
     title:"Tight spaces",
     size:{width:5,height:5},
     start:{x:0,y:1},
+    shells:[],
     board:[
       [[1,-1],[0,-1],[0,-1],[4, 1],[0,-1]],
       [[1,-1],[1,-1],[0,-1],[4,-1],[4,-2]],
@@ -218,6 +230,7 @@ let player={x:0,y:0,z:0,facing:0};
 let shells=[];
 
 //asset stuff
+
 const colors=["white","grey","#151515","white","blue"];
 
 const goal=new Image();
@@ -240,6 +253,24 @@ playerImgB.src = 'assets/3-powered-rumba-on-b.png';
 
 const shellImg=new Image();
 shellImg.src = 'assets/0-powered-rumba.png';
+
+const wall1=new Image();
+wall1.src = 'assets/wall-1.png';
+
+const wall2=new Image();
+wall2.src = 'assets/wall-2.png';
+
+const wall3=new Image();
+wall3.src = 'assets/wall-3.png';
+
+const wall4=new Image();
+wall4.src = 'assets/wall-4.png';
+
+const wall5=new Image();
+wall5.src = 'assets/wall-5.png';
+
+const wall6=new Image();
+wall6.src = 'assets/wall-6.png';
 
 const tile1=new Image();
 tile1.src = 'assets/tile-1.png';
@@ -302,37 +333,44 @@ const tiles=[
   {
     img:groundTile,
     elevator:groundTile,
-    elevatorTube:elevator0
+    elevatorTube:elevator0,
+    wall:wall1
   },
   {
     img:tile1,
     elevator:elevatorTile1,
-    elevatorTube:elevator1
+    elevatorTube:elevator1,
+    wall:wall1
   },
   {
     img:tile2,
     elevator:elevatorTile2,
-    elevatorTube:elevator2
+    elevatorTube:elevator2,
+    wall:wall2
   },
   {
     img:tile3,
     elevator:elevatorTile3,
-    elevatorTube:elevator3
+    elevatorTube:elevator3,
+    wall:wall3
   },
   {
     img:tile4,
     elevator:elevatorTile4,
-    elevatorTube:elevator4
+    elevatorTube:elevator4,
+    wall:wall4
   },
   {
     img:tile5,
     elevator:elevatorTile5,
-    elevatorTube:elevator5
+    elevatorTube:elevator5,
+    wall:wall5
   },
   {
     img:tile6,
     elevator:elevatorTile6,
-    elevatorTube:elevator6
+    elevatorTube:elevator6,
+    wall:wall6
   },
 ];
 
@@ -806,8 +844,12 @@ function movePlayer(x,y){
     player.y+y>=0&&player.y+y<levels[level].size.height){
     nexs=gameGrid[player.x+x][player.y+y];
   }
+  else{
+    return ret;
+  }
+
   //if(ret){steps--;return true;}
-  if((keys[32]||keys[10]||keys[13])&&player.z===nexs[0]){
+  if(ret&&(player.z===nexs[0]||(fcns[0]===nexs[0]&&!player.z))){
     if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
       if(fcns[0]>0&&fcns[0]!==curs[0]&&moveBlock(fcns[0],x,y)){
         animationQueue.push(['playerPos',player.x+x,player.y+y]);
@@ -819,12 +861,9 @@ function movePlayer(x,y){
       }
     }
   }
-  if(player.x+x>=0&&player.x+x<levels[level].size.width&&
-    player.y+y>=0&&player.y+y<levels[level].size.height){
-    if(player.z===nexs[0]||player.z===nexs[1]){
-        animationQueue.push(['playerPos',player.x+x,player.y+y]);
-        return ret;
-    }
+  if(player.z===nexs[0]||player.z===nexs[1]){
+      animationQueue.push(['playerPos',player.x+x,player.y+y]);
+      return ret;
   }
   return ret;
 }
@@ -896,6 +935,7 @@ function drawBoard(L,tx,ty){
       if(gameGrid[i][j][0]){
         if(gameGrid[i][j][1]>=0){
           imageInSquare(tiles[gameGrid[i][j][1]].img,W*(i+0.5),H*(j+1-gameGrid[i][j][1]*0.125),W,H*(1+gameGrid[i][j][1]*0.125),tx,ty);
+          imageInSquare(tiles[gameGrid[i][j][0]].wall,W*(i+0.5),H*(j+2-gameGrid[i][j][1]*0.125),W,H*(gameGrid[i][j][1]*0.125),tx,ty);
             for(let s=0;s<bots[i].length;s++){
               if(bots[i][s][2]<gameGrid[i][j][0]){
                 drawPlayer(...bots[i][s]);
