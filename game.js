@@ -4,18 +4,19 @@ graphics:
 asset creation
 - shell bots
 - animation stack
-  - rotate player
-  - move player
-  - move block
+  x rotate player
+  x move player
+  x move block
   - move power
   - win
+  - toggle grab
 - better mobile dragging (don't press button after dragging)
 - only drag things higher than you
 - other mechanics sepcific to the new visuals
 - undo button
-- animation stack
 - remove side-stepping
 - add tutorial
+- BUG: moving after transporting before animation is done
 */
 
 //initialize canvas
@@ -63,14 +64,15 @@ let levels=[
   {
     title:"Baby steps",
     size:{width:4,height:4},
-    start:{x:0,y:0},
+    start:{x:0,y:3},
+    shells:[{x:3,y:1,z:3,facing:0},{x:1,y:1,z:2,facing:0},{x:3,y:2,z:1,facing:0}],
     board:[
-      [[3,-1],[2,-1],[1,-1],[0,-1]],
-      [[3,-1],[2, 1],[1,-1],[0,-2]],
+      [[3,-2],[2,-1],[1,-1],[0,-1]],
+      [[3,-1],[2, 1],[1,-1],[0,-1]],
       [[3,-1],[2,-1],[1,-1],[0,-1]],
       [[3,-1],[3, 2],[1, 0],[0,-1]],
     ],
-    stepGoals:[12,14,15],
+    stepGoals:[16,18,20],
     best:0
   },
   {
@@ -210,9 +212,10 @@ let levels=[
   },
 ];
 
-let steps=0;
+let steps=0,counter=0;
 let gameGrid=[];
 let player={x:0,y:0,z:0,facing:0};
+let shells=[];
 
 //asset stuff
 const colors=["white","grey","#151515","white","blue"];
@@ -228,6 +231,15 @@ groundTile.src = 'assets/ground-tile.png';
 
 const playerImg=new Image();
 playerImg.src = 'assets/3-powered-rumba.png';
+
+const playerImgA=new Image();
+playerImgA.src = 'assets/3-powered-rumba-on-a.png';
+
+const playerImgB=new Image();
+playerImgB.src = 'assets/3-powered-rumba-on-b.png';
+
+const shellImg=new Image();
+shellImg.src = 'assets/0-powered-rumba.png';
 
 const tile1=new Image();
 tile1.src = 'assets/tile-1.png';
@@ -265,34 +277,62 @@ elevatorTile5.src = 'assets/elevator-tile-5.png';
 const elevatorTile6=new Image();
 elevatorTile6.src = 'assets/elevator-tile-6.png';
 
+const elevator0=new Image();
+elevator0.src = 'assets/elevator-0.png';
+
+const elevator1=new Image();
+elevator1.src = 'assets/elevator-1.png';
+
+const elevator2=new Image();
+elevator2.src = 'assets/elevator-2.png';
+
+const elevator3=new Image();
+elevator3.src = 'assets/elevator-3.png';
+
+const elevator4=new Image();
+elevator4.src = 'assets/elevator-4.png';
+
+const elevator5=new Image();
+elevator5.src = 'assets/elevator-5.png';
+
+const elevator6=new Image();
+elevator6.src = 'assets/elevator-6.png';
+
 const tiles=[
   {
     img:groundTile,
-    elevator:groundTile
+    elevator:groundTile,
+    elevatorTube:elevator0
   },
   {
     img:tile1,
-    elevator:elevatorTile1
+    elevator:elevatorTile1,
+    elevatorTube:elevator1
   },
   {
     img:tile2,
-    elevator:elevatorTile2
+    elevator:elevatorTile2,
+    elevatorTube:elevator2
   },
   {
     img:tile3,
-    elevator:elevatorTile3
+    elevator:elevatorTile3,
+    elevatorTube:elevator3
   },
   {
     img:tile4,
-    elevator:elevatorTile4
+    elevator:elevatorTile4,
+    elevatorTube:elevator4
   },
   {
     img:tile5,
-    elevator:elevatorTile5
+    elevator:elevatorTile5,
+    elevatorTube:elevator5
   },
   {
     img:tile6,
-    elevator:elevatorTile6
+    elevator:elevatorTile6,
+    elevatorTube:elevator6
   },
 ];
 
@@ -397,6 +437,19 @@ function animate(){
         animationQueue.shift();
       }
     break;
+    case('transport'):
+      let tp=[player.x,player.y,player.z,player.facing];
+      let S=shells[animationQueue[0][1]];
+      player.x=S.x;
+      player.y=S.y;
+      player.z=S.z;
+      player.facing=S.facing;
+      S.x=tp[0];
+      S.y=tp[1];
+      S.z=tp[2];
+      S.facing=tp[3];
+      animationQueue.shift();
+    break;
     case('playerPos'):
       if(player.x-animationQueue[0][1]<0){
         player.x+=0.1;
@@ -414,7 +467,7 @@ function animate(){
         player.x=animationQueue[0][1];
         player.y=animationQueue[0][2];
         animationQueue.shift();
-        player.z=gameGrid[player.x][player.y][0];
+        //player.z=gameGrid[player.x][player.y][0];
         if(gameGrid[player.x][player.y][1]===-2){
           beatLevel();
         }
@@ -484,17 +537,21 @@ function setupLevel(L){
   animationQueue=[];
   steps=0;
   gameGrid=[];
+  shells=[];
   player.x=L.start.x;
   player.y=L.start.y;
   player.facing=0;
-  for(var i=0;i<L.size.width;i++){
+  for(let i=0;i<L.size.width;i++){
     gameGrid.push([]);
-    for(var j=0;j<L.size.height;j++){
+    for(let j=0;j<L.size.height;j++){
       gameGrid[i].push(L.board[i][j]);
     }
   }
+  for(let s=0;s<L.shells.length;s++){
+    shells.push({x:L.shells[s].x,y:L.shells[s].y,z:L.shells[s].z,facing:L.shells[s].facing});
+  }
   player.z=gameGrid[player.x][player.y][0];
-};
+}
 function imageInSquare(img,x,y,W,H,tx,ty){
   switch(ARType){
     case(1):
@@ -522,30 +579,84 @@ function imageInSquare(img,x,y,W,H,tx,ty){
       ctx.drawImage(img,px+mn*x,py+mn*y,mn*W,mn*H);
     break;
   }
-};
-function drawPlayer(W,H,tx,ty){
+}
+function drawPlayer(x,y,z,facing,W,H,tx,ty,playerImg,clpx,clp){
   //imageInSquare(playerImg,W*(player.x+0.5),H*(player.y+1-gameGrid[player.x][player.y][0]*0.125),W,H,tx,ty);
   switch(ARType){
     case(1):
       ctx.save();
-      ctx.translate(W*(player.x+0.5)*min+0.5*W*min,ty+H*(player.y+1-player.z*0.125)*min+0.5*H*min);
-      ctx.rotate(player.facing*Math.PI*0.5);
+      ctx.translate(W*(x+0.5)*min+0.5*W*min,ty+H*(y+1-z*0.125)*min+0.5*H*min);
+      if(clp){
+        ctx.beginPath();
+        ctx.moveTo(-0.5*min*W,-0.5*min*H-(y%1-1)*min*H);
+        ctx.lineTo(0.5*min*W,-0.5*min*H-(y%1-1)*min*H);
+        ctx.lineTo(0.5*min*W,0.5*min*H-(y%1-1)*min*H);
+        ctx.lineTo(-0.5*min*W,0.5*min*H-(y%1-1)*min*H);
+        ctx.closePath();
+        ctx.clip();
+      }
+      if(clpx){
+        ctx.beginPath();
+        ctx.moveTo(-0.5*min*W+(-x%1)*min*W,-0.5*min*H);
+        ctx.lineTo(0.5*min*W+(-x%1)*min*W,-0.5*min*H);
+        ctx.lineTo(0.5*min*W+(-x%1)*min*W,0.5*min*H);
+        ctx.lineTo(-0.5*min*W+(-x%1)*min*W,0.5*min*H);
+        ctx.closePath();
+        ctx.clip();
+      }
+      ctx.rotate(facing*Math.PI*0.5);
       ctx.drawImage(playerImg,-0.5*W*min,-0.5*H*min,W*min,H*min);
       ctx.restore();
     break;
     case(2):
       if(w>h*0.85){
         ctx.save();
-        ctx.translate(0.5*(w-h*0.85)+W*(player.x+0.5)*h*0.85+0.5*W*h*0.85,
-        0.15*h+H*(player.y+1-player.z*0.125)*h*0.85+0.5*H*h*0.85);
-        ctx.rotate(player.facing*Math.PI*0.5);
+        ctx.translate(0.5*(w-h*0.85)+W*(x+0.5)*h*0.85+0.5*W*h*0.85,
+        0.15*h+H*(y+1-z*0.125)*h*0.85+0.5*H*h*0.85);
+        if(clp){
+          ctx.beginPath();
+          ctx.moveTo(-0.5*0.85*W*h,-0.5*0.85*H*h-(y%1-1)*0.85*H*h);
+          ctx.lineTo(0.5*0.85*W*h,-0.5*0.85*H*h-(y%1-1)*0.85*H*h);
+          ctx.lineTo(0.5*0.85*W*h,0.5*0.85*H*h-(y%1-1)*0.85*H*h);
+          ctx.lineTo(-0.5*0.85*W*h,0.5*0.85*H*h-(y%1-1)*0.85*H*h);
+          ctx.closePath();
+          ctx.clip();
+        }
+        if(clpx){
+          ctx.beginPath();
+          ctx.moveTo(-0.5*0.85*W*h+(-x%1)*0.85*W*h,-0.5*0.85*H*h);
+          ctx.lineTo(0.5*0.85*W*h+(-x%1)*0.85*W*h,-0.5*0.85*H*h);
+          ctx.lineTo(0.5*0.85*W*h+(-x%1)*0.85*W*h,0.5*0.85*H*h);
+          ctx.lineTo(-0.5*0.85*W*h+(-x%1)*0.85*W*h,0.5*0.85*H*h);
+          ctx.closePath();
+          ctx.clip();
+        }
+        ctx.rotate(facing*Math.PI*0.5);
         ctx.drawImage(playerImg,-0.5*W*h*0.85,-0.5*H*h*0.85,W*h*0.85,H*h*0.85);
         ctx.restore();
       }
       else{
         ctx.save();
-        ctx.translate(W*(player.x+0.5)*min+0.5*W*min,0.15*h+H*(player.y+1-player.z*0.125)*min+0.5*H*min);
-        ctx.rotate(player.facing*Math.PI*0.5);
+        ctx.translate(W*(x+0.5)*min+0.5*W*min,0.15*h+H*(y+1-z*0.125)*min+0.5*H*min);
+        if(clp){
+          ctx.beginPath();
+          ctx.moveTo(-0.5*min*W,-0.5*min*H-(y%1-1)*min*H);
+          ctx.lineTo(0.5*min*W,-0.5*min*H-(y%1-1)*min*H);
+          ctx.lineTo(0.5*min*W,0.5*min*H-(y%1-1)*min*H);
+          ctx.lineTo(-0.5*min*W,0.5*min*H-(y%1-1)*min*H);
+          ctx.closePath();
+          ctx.clip();
+        }
+        if(clpx){
+          ctx.beginPath();
+          ctx.moveTo(-0.5*min*W+(-x%1)*min*W,-0.5*min*H);
+          ctx.lineTo(0.5*min*W+(-x%1)*min*W,-0.5*min*H);
+          ctx.lineTo(0.5*min*W+(-x%1)*min*W,0.5*min*H);
+          ctx.lineTo(-0.5*min*W+(-x%1)*min*W,0.5*min*H);
+          ctx.closePath();
+          ctx.clip();
+        }
+        ctx.rotate(facing*Math.PI*0.5);
         ctx.drawImage(playerImg,-0.5*W*min,-0.5*H*min,W*min,H*min);
         ctx.restore();
       }
@@ -562,14 +673,31 @@ function drawPlayer(W,H,tx,ty){
         px=(w-min)/2;
       }
       ctx.save();
-      ctx.translate(px+W*(player.x+0.5)*mn+0.5*mn*W,py+H*(player.y+1-player.z*0.125)*mn+0.5*mn*H);
-      ctx.rotate(player.facing*Math.PI*0.5);
+      ctx.translate(px+W*(x+0.5)*mn+0.5*mn*W,py+H*(y+1-z*0.125)*mn+0.5*mn*H);
+      if(clp){
+        ctx.beginPath();
+        ctx.moveTo(-0.5*mn*W,-0.5*mn*H-(y%1-1)*mn*H);
+        ctx.lineTo(0.5*mn*W,-0.5*mn*H-(y%1-1)*mn*H);
+        ctx.lineTo(0.5*mn*W,0.5*mn*H-(y%1-1)*mn*H);
+        ctx.lineTo(-0.5*mn*W,0.5*mn*H-(y%1-1)*mn*H);
+        ctx.closePath();
+        ctx.clip();
+      }
+      if(clpx){
+        ctx.beginPath();
+        ctx.moveTo(-0.5*mn*W+(-x%1)*mn*W,-0.5*mn*H);
+        ctx.lineTo(0.5*mn*W+(-x%1)*mn*W,-0.5*mn*H);
+        ctx.lineTo(0.5*mn*W+(-x%1)*mn*W,0.5*mn*H);
+        ctx.lineTo(-0.5*mn*W+(-x%1)*mn*W,0.5*mn*H);
+        ctx.closePath();
+        ctx.clip();
+      }
+      ctx.rotate(facing*Math.PI*0.5);
       ctx.drawImage(playerImg,-0.5*mn*W,-0.5*mn*H,mn*W,mn*H);
       ctx.restore();
     break;
   }
-  if(keys[32]||keys[10]||keys[13]){}//magnet on
-};
+}
 function movePlayer(x,y){
   steps++;
   let ret=false;
@@ -652,24 +780,108 @@ function movePlayer(x,y){
   }
   }
   if(ret){steps--;return true;}
-};
+}
+function movePlayer(x,y){
+  steps++;
+  let curs=gameGrid[player.x][player.y];
+  let nexs=[0,0],ret=false;
+  if(keys[32]||keys[10]||keys[13]){ret=true;}
+  var fc=[0,0];
+  switch(player.facing){
+      case(0):
+          fc=[0,1];
+      break;case(1):
+          fc=[-1,0];
+      break;case(2):
+          fc=[0,-1];
+      break;case(3):
+          fc=[1,0];
+      break;
+  }
+  let fcns=[0,0];
+  if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<gameGrid.length&&player.y+fc[1]<gameGrid[0].length){
+    fcns=gameGrid[player.x+fc[0]][player.y+fc[1]];
+  }
+  if(player.x+x>=0&&player.x+x<levels[level].size.width&&
+    player.y+y>=0&&player.y+y<levels[level].size.height){
+    nexs=gameGrid[player.x+x][player.y+y];
+  }
+  //if(ret){steps--;return true;}
+  if((keys[32]||keys[10]||keys[13])&&player.z===nexs[0]){
+    if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
+      if(fcns[0]>0&&fcns[0]!==curs[0]&&moveBlock(fcns[0],x,y)){
+        animationQueue.push(['playerPos',player.x+x,player.y+y]);
+        return true;
+      }
+      if(fcns[0]!==curs[0]&&fcns[0]!==0){
+        steps--;
+        return true;
+      }
+    }
+  }
+  if(player.x+x>=0&&player.x+x<levels[level].size.width&&
+    player.y+y>=0&&player.y+y<levels[level].size.height){
+    if(player.z===nexs[0]||player.z===nexs[1]){
+        animationQueue.push(['playerPos',player.x+x,player.y+y]);
+        return ret;
+    }
+  }
+  return ret;
+}
 function drawBoard(L,tx,ty){
   var W=1/(L.size.width+1),H=1/(L.size.height+1);
-  for(var i=L.size.width-1;i>=0;i--){
-    for(var j=L.size.height-1;j>=0;j--){
+  for(let i=L.size.width-1;i>=0;i--){
+    for(let j=L.size.height-1;j>=0;j--){
       //rect(50+W*i,75+H*j,W,H);
       //imageInSquare(groundTile,W*i,H*j,W,H,tx,ty);
       imageInSquare(groundTile,W*(i+0.5),H*(j+1),W,H,tx,ty);
     }
   }
-  for(var j=0;j<L.size.height;j++){
-    for(var i=gameGrid.length-1;i>=0;i--){
+  for(let j=0;j<L.size.height;j++){
+    let bots=[];
+    let clp=false;
+    for(let i=gameGrid.length-1;i>=0;i--){
+      bots.push([]);
+    }
+    for(let sl=0;sl<shells.length;sl++){
+      if(shells[sl].y===j){
+        bots[shells[sl].x].push([shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg]);
+        //drawPlayer(shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg);
+      }
+    }
+    if(Math.ceil(player.y)===j||Math.floor(player.y)===j){
+      if(Math.floor(player.y)!==j){
+        clp=true;
+      }
+      if((keys[32]||keys[10]||keys[13])&&counter%4<2){
+        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA]);
+        if(Math.ceil(player.x)!==player.x){
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA,true]);
+        }
+      }
+      else if(keys[32]||keys[10]||keys[13]){
+        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB]);
+        if(Math.ceil(player.x)!==player.x){
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB,true]);
+        }
+      }
+      else{
+        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg]);
+        if(Math.ceil(player.x)!==player.x){
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg,true]);
+        }
+      }
+    }
+    for(let i=gameGrid.length-1;i>=0;i--){
       //drawBlock(blocks[gameGrid[i][j]-1],i,j,W,H);switch(ARType){
       if(animationQueue.length>0&&animationQueue[0][0]==='moveBlock'){
         for(let k=0;k<animationQueue[0][4].length;k++){
           if(animationQueue[0][4][k][0]===i&&animationQueue[0][4][k][1]===j){
             if(animationQueue[0][4][k][2]>=0){
-              imageInSquare(tiles[animationQueue[0][4][k][2]].img,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][4][k][2]*0.125),W,H*(1+animationQueue[0][4][k][2]*0.125),tx,ty);
+              if(animationQueue[0][4][k][2]>0){
+                imageInSquare(tiles[animationQueue[0][4][k][2]].img,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][4][k][2]*0.125),W,H*(1+animationQueue[0][4][k][2]*0.125),tx,ty);
+              }
+              imageInSquare(tiles[animationQueue[0][4][k][2]].elevatorTube,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][1]*0.125),W,H,tx,ty);
               imageInSquare(tiles[animationQueue[0][1]].elevator,W*(i+animationQueue[0][2]*animationQueue[0][5]+0.5),H*(j+animationQueue[0][3]*animationQueue[0][5]+1-animationQueue[0][1]*0.125),W,H*(1+animationQueue[0][1]*0.125),tx,ty);
             }
             else{
@@ -684,6 +896,14 @@ function drawBoard(L,tx,ty){
       if(gameGrid[i][j][0]){
         if(gameGrid[i][j][1]>=0){
           imageInSquare(tiles[gameGrid[i][j][1]].img,W*(i+0.5),H*(j+1-gameGrid[i][j][1]*0.125),W,H*(1+gameGrid[i][j][1]*0.125),tx,ty);
+            for(let s=0;s<bots[i].length;s++){
+              if(bots[i][s][2]<gameGrid[i][j][0]){
+                drawPlayer(...bots[i][s]);
+                bots[i].splice(s,1);
+                s--;
+              }
+            }
+          imageInSquare(tiles[gameGrid[i][j][1]].elevatorTube,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H,tx,ty);
           imageInSquare(tiles[gameGrid[i][j][0]].elevator,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H*(1+gameGrid[i][j][0]*0.125),tx,ty);
         }
         else{
@@ -693,9 +913,10 @@ function drawBoard(L,tx,ty){
       if(gameGrid[i][j][1]===-2){
         imageInSquare(goal,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H,tx,ty);
       }
-    }
-    if(Math.ceil(player.y)===j){
-      drawPlayer(W,H,tx,ty);
+
+      for(let s=0;s<bots[i].length;s++){
+        drawPlayer(...bots[i][s],clp,clp);
+      }
     }
   }
 }
@@ -1039,6 +1260,8 @@ function drawCanvas(t){
   //ctx.fillRect(mouseX-25,mouseY-25,50,50);
   if(t){
     window.requestAnimationFrame(drawCanvas);
+    counter++;
+    if(counter>127){counter=0;}
   }
 }
 window.requestAnimationFrame(drawCanvas);
@@ -1074,12 +1297,20 @@ window.onkeydown = (event)=>{
     }
     //if(animationQueue.length>0){return}
     switch(event.keyCode){
+      case(90)://Z
+        for(let i=0;i<shells.length;i++){
+          if(shells[i].x===player.x&&shells[i].y===player.y){
+            animationQueue.push(["transport",i,player.z,shells[i].z]);
+            steps++;
+          }
+        }
+      break;
       case(37)://LEFT_ARROW
       case(65):
         if(!movePlayer(-1,0)){
           if(player.facing===1&&animationQueue.length===0){steps--;}
           //player.facing=1;
-          animationQueue.splice(animationQueue.length-1,0,["facing",1]);
+          animationQueue.unshift(["facing",1]);
         }
       break;
       case(39)://RIGHT_ARROW
@@ -1087,7 +1318,7 @@ window.onkeydown = (event)=>{
         if(!movePlayer(1,0)){
           if(player.facing===3&&animationQueue.length===0){steps--;}
           //player.facing=3;
-          animationQueue.splice(animationQueue.length-1,0,["facing",3]);
+          animationQueue.unshift(["facing",3]);
         }
       break;
       case(38)://UP_ARROW
@@ -1095,7 +1326,7 @@ window.onkeydown = (event)=>{
         if(!movePlayer(0,-1)){
           if(player.facing===2&&animationQueue.length===0){steps--;}
           //player.facing=2;
-          animationQueue.splice(animationQueue.length-1,0,["facing",2]);
+          animationQueue.unshift(["facing",2]);
         }
       break;
       case(40)://DOWN_ARROW
@@ -1103,7 +1334,7 @@ window.onkeydown = (event)=>{
         if(!movePlayer(0,1)){
           if(player.facing===0&&animationQueue.length===0){steps--;}
           //player.facing=0;
-          animationQueue.splice(animationQueue.length-1,0,["facing",0]);
+          animationQueue.unshift(["facing",0]);
         }
       break;
     }
