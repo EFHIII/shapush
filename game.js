@@ -17,6 +17,7 @@ x shell bots
 - remove side-stepping
 - add tutorial
 - BUG: moving after transporting before animation is done
+- BUGS: moving blocks, render order of bots on top of moving blocks
 - fix levels
 - add levels
 */
@@ -58,7 +59,7 @@ function getARType(AR){
 getARType(w/h);
 
 let levelScreen=0;
-let unlocked=0;
+let unlocked=10;
 
 let version="0.2.2";
 let level=0;
@@ -136,7 +137,7 @@ let levels=[
     title:"On top",
     size:{width:4,height:4},
     start:{x:3,y:3},
-    shells:[],
+    shells:[{x:2,y:2,z:2,facing:0},{x:3,y:1,z:3,facing:0},{x:0,y:0,z:4,facing:0}],
     board:[
       [[4, 2],[4,-2],[2,-1],[0,-1]],
       [[0,-1],[0,-1],[2,-1],[0,-1]],
@@ -150,14 +151,14 @@ let levels=[
     title:"Move around",
     size:{width:6,height:6},
     start:{x:0,y:0},
-    shells:[],
+    shells:[{x:3,y:2,z:2,facing:0},{x:2,y:4,z:1,facing:0}],
     board:[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[1,-1],[0,-1]],
+      [[0,-1],[0,-1],[2,-1],[2,-2],[1, 0],[0,-1]],
+      [[0,-1],[0,-1],[2, 1],[2,-1],[1,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[1,-1],[0,-1]],
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
-      [[0,-1],[0,-1],[2, 1],[2,-1],[0,-1],[0,-1]],
-      [[0,-1],[0,-1],[2,-1],[2,-2],[0,-1],[0,-1]],
-      [[0,-1],[1,-1],[1,-1],[1, 0],[1,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
     ],
     stepGoals:[14,16,20],
     best:0
@@ -166,7 +167,7 @@ let levels=[
     title:"U",
     size:{width:5,height:5},
     start:{x:2,y:4},
-    shells:[],
+    shells:[{x:1,y:2,z:2,facing:0},{x:1,y:3,z:1,facing:0},{x:2,y:3,z:3,facing:0}],
     board:[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
       [[2,-1],[2,-1],[3, 2],[3, 1],[0,-1]],
@@ -181,7 +182,7 @@ let levels=[
     title:"More complex",
     size:{width:5,height:5},
     start:{x:0,y:0},
-    shells:[],
+    shells:[{x:1,y:2,z:3,facing:0},{x:4,y:2,z:2,facing:0}],
     board:[
       [[0,-1],[3,-2],[3,-1],[0,-1],[0,-1]],
       [[0,-1],[3,-1],[3, 2],[0,-1],[0,-1]],
@@ -196,7 +197,7 @@ let levels=[
     title:"A variation",
     size:{width:5,height:5},
     start:{x:0,y:0},
-    shells:[],
+    shells:[{x:2,y:0,z:3,facing:0},{x:0,y:2,z:2,facing:0},{x:4,y:2,z:1,facing:0}],
     board:[
       [[0,-1],[2,-1],[2, 1],[0,-1],[0,-1]],
       [[0,-1],[0,-1],[2,-1],[0,-1],[0,-1]],
@@ -211,7 +212,7 @@ let levels=[
     title:"Tight spaces",
     size:{width:5,height:5},
     start:{x:0,y:1},
-    shells:[],
+    shells:[{x:3,y:0,z:3,facing:0},{x:4,y:0,z:2,facing:0},{x:0,y:3,z:4,facing:0},{x:4,y:3,z:1,facing:0}],
     board:[
       [[1,-1],[0,-1],[0,-1],[4, 1],[0,-1]],
       [[1,-1],[1,-1],[0,-1],[4,-1],[4,-2]],
@@ -830,7 +831,7 @@ function drawBoard(L,tx,ty){
     }
     for(let sl=0;sl<shells.length;sl++){
       if(Math.ceil(shells[sl].y)===j||Math.floor(shells[sl].y)===j){
-        bots[shells[sl].x].push([shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg]);
+        bots[Math.floor(shells[sl].x)].push([shells[sl].x,shells[sl].y,shells[sl].z,shells[sl].facing,W,H,tx,ty,shellImg]);
       }
     }
     if(Math.ceil(player.y)===j||Math.floor(player.y)===j){
@@ -838,19 +839,34 @@ function drawBoard(L,tx,ty){
         clp=true;
       }
       if((keys[32]||keys[10]||keys[13])&&counter%4<2){
-        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA]);
+        if(Math.ceil(player.x)<gameGrid.length){
+          bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA]);
+        }
+        else{
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA]);
+        }
         if(Math.ceil(player.x)!==player.x){
           bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgA,true]);
         }
       }
       else if(keys[32]||keys[10]||keys[13]){
-        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB]);
+        if(Math.ceil(player.x)<gameGrid.length){
+          bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB]);
+        }
+        else{
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB]);
+        }
         if(Math.ceil(player.x)!==player.x){
           bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImgB,true]);
         }
       }
       else{
-        bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg]);
+        if(Math.ceil(player.x)<gameGrid.length){
+          bots[Math.ceil(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg]);
+        }
+        else{
+          bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg]);
+        }
         if(Math.ceil(player.x)!==player.x){
           bots[Math.floor(player.x)].push([player.x,player.y,player.z,player.facing,W,H,tx,ty,playerImg,true]);
         }
@@ -892,7 +908,7 @@ function drawBoard(L,tx,ty){
         drawPlayer(...bots[i][nd]);
         bots[i].splice(nd,1);
       }
-      if(gameGrid[i][j][0]){
+      else if(gameGrid[i][j][0]){
         if(gameGrid[i][j][1]>=0){
           imageInSquare(tiles[gameGrid[i][j][1]].img,W*(i+0.5),H*(j+1-gameGrid[i][j][1]*0.125),W,H*(1+gameGrid[i][j][1]*0.125),tx,ty);
           imageInSquare(tiles[gameGrid[i][j][0]].wall,W*(i+0.5),H*(j+2-gameGrid[i][j][1]*0.125),W,H*(gameGrid[i][j][1]*0.125),tx,ty);
@@ -913,9 +929,13 @@ function drawBoard(L,tx,ty){
       if(gameGrid[i][j][1]===-2){
         imageInSquare(goal,W*(i+0.5),H*(j+1-gameGrid[i][j][0]*0.125),W,H,tx,ty);
       }
-
       for(let s=0;s<bots[i].length;s++){
-        drawPlayer(...bots[i][s],clp,clp);
+        if(bots[i][s][0]===player.x&&bots[i][s][1]===player.y){
+          drawPlayer(...bots[i][s],clp,clp);
+        }
+        else{
+          drawPlayer(...bots[i][s]);
+        }
       }
     }
   }
@@ -1281,7 +1301,7 @@ window.onkeydown = (event)=>{
     switch(event.keyCode){
       case(90)://Z
         for(let i=0;i<shells.length;i++){
-          if(shells[i].x===player.x&&shells[i].y===player.y){
+          if(tempAnimationQueue.length===2&&shells[i].x===player.x&&shells[i].y===player.y){
             animationQueue.push(["transport",i,player.z,shells[i].z]);
             steps++;
           }
