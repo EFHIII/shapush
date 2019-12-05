@@ -9,17 +9,18 @@ x shell bots
   x move block
   - move power
   - win
-  - toggle grab
+  x toggle grab
 - better mobile dragging (don't press button after dragging)
-- only drag things higher than you
+x only drag things higher than you
 - other mechanics sepcific to the new visuals
 - undo button
-- remove side-stepping
+x remove side-stepping
 - add tutorial
 - BUG: moving after transporting before animation is done
 - BUGS: moving blocks, render order of bots on top of moving blocks
 - fix levels
 - add levels
+- stars
 */
 
 //initialize canvas
@@ -1178,7 +1179,7 @@ function s2(tx,ty){
 
         if(mobile){
           button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{});
+          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{keyDown({keyCode:90})});
         }
         else{
           button(0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{});
@@ -1192,8 +1193,8 @@ function s2(tx,ty){
         //button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
 
         if(mobile){
-          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{});
-          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{});
+          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{keyDown({keyCode:90})});
         }
         else{
           button(0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
@@ -1289,7 +1290,8 @@ window.onresize = ()=>{
   getARType(w/h);
 }
 
-window.onkeydown = (event)=>{
+const keyDown=(event)=>{
+  console.log(event.keyCode);
   keys[event.keyCode]=true;
   if(scene===2){
     let tempAnimationQueue=JSON.stringify(animationQueue);
@@ -1341,6 +1343,8 @@ window.onkeydown = (event)=>{
     player=JSON.parse(tempPlayer);
   }
 }
+
+window.onkeydown = keyDown;
 
 window.onkeyup = (event)=>{
   keys[event.keyCode]=false;
