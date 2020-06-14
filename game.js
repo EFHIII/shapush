@@ -53,9 +53,9 @@ function getARType(AR){
 getARType(w/h);
 
 let levelScreen=0;
-let unlocked=10;
+let unlocked=0;
 
-let version="0.2.2";
+let version="0.2.3";
 let level=0;
 let levels=[
   {
@@ -118,19 +118,6 @@ let levels=[
       [[2,-1],[0,-1],[0,-1],[0,-1]],
       [[2,-1],[3, 1],[0,-1],[4,-2]],
       [[2,-1],[3, 2],[0,-1],[4, 3]]
-    ],
-    stepGoals:[15,17,180],
-    best:0
-  },
-  {
-    title:"On top",
-    size:{width:4,height:4},
-    start:{x:3,y:3},
-    board:[
-      [[4, 2],[4,-2],[2,-1],[0,-1]],
-      [[0,-1],[0,-1],[2,-1],[0,-1]],
-      [[0,-1],[0,-1],[2, 1],[1,-1]],
-      [[3,-1],[3, 2],[0,-1],[1,-1]]
     ],
     stepGoals:[15,17,180],
     best:0
