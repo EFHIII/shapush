@@ -853,12 +853,12 @@ function s2(tx,ty){
       }
       else{
         //if(mobile){
-          button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          //button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
         //  ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
         //}
         //else{
           button(0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{keys[10]=!keys[10]},grab,grabb);
-        }
+        //}
 
         button(w-0.5*(h-min),0,0.5*(h-min),0.5*(h-min),()=>{setupLevel(levels[level])},restart,restartb);
         button(0,0,0.5*(h-min),0.5*(h-min),()=>{sb=1},backMini,backMinib);
