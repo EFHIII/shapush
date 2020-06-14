@@ -68,7 +68,7 @@ let levels=[
       [[3,-1],[2,-1],[1,-1],[0,-1]],
       [[3,-1],[3, 2],[1, 0],[0,-1]],
     ],
-    stepGoals:[16,18,20],
+    stepGoals:[13,15,17,20],
     best:0
   },
   {
@@ -81,7 +81,7 @@ let levels=[
       [[2, 0],[0,-1],[0,-1],[0,-1]],
       [[2,-1],[0,-1],[0,-1],[0,-1]]
     ],
-    stepGoals:[6,7,8],
+    stepGoals:[7,8,9,10],
     best:0
   },
   {
@@ -94,7 +94,7 @@ let levels=[
       [[2,-2],[0,-1],[1,-1],[0,-1]],
       [[1,-1],[1,-1],[1,-1],[1,-1]]
     ],
-    stepGoals:[8,10,12],
+    stepGoals:[8,9,10,12],
     best:0
   },
   {
@@ -106,7 +106,7 @@ let levels=[
       [[0,-1],[1,-1],[1,-1]],
       [[0,-1],[2,-2],[2, 0]],
     ],
-    stepGoals:[7,8,9],
+    stepGoals:[7,8,9,10],
     best:0
   },
   {
@@ -119,7 +119,7 @@ let levels=[
       [[2,-1],[3, 1],[0,-1],[4,-2]],
       [[2,-1],[3, 2],[0,-1],[4, 3]]
     ],
-    stepGoals:[15,17,180],
+    stepGoals:[17,18,20,22],
     best:0
   },
   {
@@ -134,7 +134,7 @@ let levels=[
       [[0,-1],[0,-1],[0,-1],[0,-1],[1,-1],[0,-1]],
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
     ],
-    stepGoals:[14,16,20],
+    stepGoals:[17,18,20,22],
     best:0
   },
   {
@@ -148,7 +148,7 @@ let levels=[
       [[1,-2],[1,-1],[3,-1],[3,-1],[0,-1]],
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
     ],
-    stepGoals:[19,21,23],
+    stepGoals:[19,20,21,23],
     best:0
   },
   {
@@ -162,7 +162,7 @@ let levels=[
       [[0,-1],[2,-1],[2,-1],[0,-1],[0,-1]],
       [[0,-1],[2,-1],[2, 0],[0,-1],[0,-1]]
     ],
-    stepGoals:[24,26,28],
+    stepGoals:[24,25,26,28],
     best:0
   },
   {
@@ -176,7 +176,7 @@ let levels=[
       [[0,-1],[0,-1],[1,-1],[0,-1],[0,-1]],
       [[0,-1],[1,-1],[1, 0],[0,-1],[0,-1]]
     ],
-    stepGoals:[33,34,36],
+    stepGoals:[32,33,34,36],
     best:0
   },
   {
@@ -190,7 +190,7 @@ let levels=[
       [[3, 0],[3,-1],[0,-1],[2,-1],[2,-1]],
       [[3, 2],[0,-1],[0,-1],[2, 1],[0,-1]]
     ],
-    stepGoals:[81,88,98],
+    stepGoals:[79,82,88,98],
     best:0
   },
 ];
@@ -697,13 +697,13 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<onL.stepGoals[0]){
+              if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
-              else if(onL.best<=onL.stepGoals[0]){
+              else if(onL.best<=onL.stepGoals[1]){
                 starImg=stars3;
               }
-              else if(onL.best<=onL.stepGoals[1]){
+              else if(onL.best<=onL.stepGoals[2]){
                 starImg=stars2;
               }
               else{
@@ -737,13 +737,13 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<onL.stepGoals[0]){
+              if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
-              else if(onL.best<=onL.stepGoals[0]){
+              else if(onL.best<=onL.stepGoals[1]){
                 starImg=stars3;
               }
-              else if(onL.best<=onL.stepGoals[1]){
+              else if(onL.best<=onL.stepGoals[2]){
                 starImg=stars2;
               }
               else{
@@ -800,13 +800,13 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<onL.stepGoals[0]){
+              if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
-              else if(onL.best<=onL.stepGoals[0]){
+              else if(onL.best<=onL.stepGoals[1]){
                 starImg=stars3;
               }
-              else if(onL.best<=onL.stepGoals[1]){
+              else if(onL.best<=onL.stepGoals[2]){
                 starImg=stars2;
               }
               else{
@@ -833,7 +833,7 @@ function s2(tx,ty){
     case(1):
       ctx.font=(min/10>>0)+"px sans-serif";
       ctx.textAlign='center';
-      ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.5*w,0.1*(h-min)+min/16);
+      ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.5*w,0.1*(h-min)+min/16);
 
       if(levels[level].best){
         ctx.font=(min/20>>0)+"px sans-serif";
@@ -867,7 +867,7 @@ function s2(tx,ty){
     case(2):
       ctx.font=(min/8>>0)+"px sans-serif";
       ctx.textAlign='left';
-      ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.3*w,0.11*h);
+      ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.3*w,0.11*h);
 
       button(w-0.25*h-w/h*(w/h)*50,0,0.14*h,0.14*h,()=>{keys[10]=!keys[10]},grab,grabb);
       button(w-0.13*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{setupLevel(levels[level])},restart,restartb);
@@ -877,7 +877,7 @@ function s2(tx,ty){
     case(3):
       ctx.font=(w/20>>0)+"px sans-serif";
       ctx.textAlign='center';
-      ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.1*w,0.13*w);
+      ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.1*w,0.13*w);
 
       button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{keys[10]=!keys[10]},grab,grabb);
       button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{setupLevel(levels[level])},restart,restartb);
@@ -932,10 +932,10 @@ window.requestAnimationFrame(drawCanvas);
 
 //event listeners
 var beatLevel=function(){
-  if(levels[level].stepGoals[2]-steps<0){setupLevel(levels[level]);return;}
+  if(levels[level].stepGoals[3]-steps<0){setupLevel(levels[level]);return;}
   drawCanvas(false);
   if(!levels[level].best||levels[level].best>steps){
-    levels[level].best=steps?steps:levels[level].stepGoals[2];
+    levels[level].best=steps?steps:levels[level].stepGoals[3];
   }
   sb=1;
 
