@@ -840,23 +840,23 @@ function s2(tx,ty){
         ctx.fillText("best: "+levels[level].best,0.5*w,0.25*(h-min)+min/16);
       }
       if(h/w>1.4){
-        if(mobile){
-          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-          ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
-        }
-        else{
+        //if(mobile){
+        //  button(w,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+        //  ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
+        //}
+        //else{
           button(0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{keys[10]=!keys[10]},grab,grabb);
-        }
+        //}
 
         button(0.8*w,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{setupLevel(levels[level])},restart,restartb);
         button(0,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{sb=1},backMini,backMinib);
       }
       else{
-        if(mobile){
+        //if(mobile){
           button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-          ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
-        }
-        else{
+        //  ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
+        //}
+        //else{
           button(0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{keys[10]=!keys[10]},grab,grabb);
         }
 
