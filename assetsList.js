@@ -1,3 +1,81 @@
+const grab=new Image();
+grab.src = 'assets/grab.png';
+
+const grabb=new Image();
+grabb.src = 'assets/grabb.png';
+
+
+const restart=new Image();
+restart.src = 'assets/restart.png';
+
+const restartb=new Image();
+restartb.src = 'assets/restartb.png';
+
+
+const backMini=new Image();
+backMini.src = 'assets/backMini.png';
+
+const backMinib=new Image();
+backMinib.src = 'assets/backMinib.png';
+
+
+const stars1=new Image();
+stars1.src = 'assets/stars1.png';
+
+const stars2=new Image();
+stars2.src = 'assets/stars2.png';
+
+const stars3=new Image();
+stars3.src = 'assets/stars3.png';
+
+const stars4=new Image();
+stars4.src = 'assets/stars4.png';
+
+
+const current=new Image();
+current.src = 'assets/current.png';
+
+
+const lock=new Image();
+lock.src = 'assets/lock.png';
+
+const left=new Image();
+left.src = 'assets/left.png';
+
+const leftb=new Image();
+leftb.src = 'assets/leftb.png';
+
+const right=new Image();
+right.src = 'assets/right.png';
+
+const rightb=new Image();
+rightb.src = 'assets/rightb.png';
+
+const back=new Image();
+back.src = 'assets/back.png';
+
+const backb=new Image();
+backb.src = 'assets/backb.png';
+
+const play=new Image();
+play.src = 'assets/play.png';
+
+const playb=new Image();
+playb.src = 'assets/playb.png';
+
+const fullscreen=new Image();
+fullscreen.src = 'assets/fullscreen.png';
+
+const fullscreenb=new Image();
+fullscreenb.src = 'assets/fullscreenb.png';
+
+const exitFullscreen=new Image();
+exitFullscreen.src = 'assets/exitFullscreen.png';
+
+const exitFullscreenb=new Image();
+exitFullscreenb.src = 'assets/exitFullscreenb.png';
+
+
 const goal=new Image();
 goal.src = 'assets/goal.png';
 
@@ -15,9 +93,6 @@ playerImgA.src = 'assets/3-powered-rumba-on-a.png';
 
 const playerImgB=new Image();
 playerImgB.src = 'assets/3-powered-rumba-on-b.png';
-
-const shellImg=new Image();
-shellImg.src = 'assets/0-powered-rumba.png';
 
 const tile1=new Image();
 tile1.src = 'assets/tile-1.png';

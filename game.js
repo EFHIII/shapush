@@ -240,19 +240,39 @@ const tiles=[
   },
 ];
 
-function button(x,y,w,h,callback){
-  ctx.fillStyle=colors[2];
+function button(x,y,w,h,callback,img,imgb){
+  if(img){
+    if(mouseX>x&&
+      mouseX<x+w&&
+      mouseY>y&&
+      mouseY<y+h){
+      document.body.style.cursor='pointer';
+      if(!last&&mouseIsPressed){
+        callback();last=true;
+      }
+      ctx.drawImage(imgb,x>>0,y>>0,w>>0,h>>0);
+    }
+    else{
+      ctx.drawImage(img,x>>0,y>>0,w>>0,h>>0);
+    }
+    return;
+  }
+
   if(mouseX>x&&
     mouseX<x+w&&
     mouseY>y&&
     mouseY<y+h){
-    ctx.fillStyle="rgba(0,0,0,50)";
+    ctx.fillStyle="rgba(0,0,0,0.3)";
     document.body.style.cursor='pointer';
     if(!last&&mouseIsPressed){
       callback();last=true;
     }
+    ctx.fillRect(x>>0,y>>0,w>>0,h>>0);
   }
-  ctx.fillRect(x>>0,y>>0,w>>0,h>>0);
+  else if(!img){
+    ctx.fillStyle=colors[2];
+    ctx.fillRect(x>>0,y>>0,w>>0,h>>0);
+  }
 }
 
 //animations
@@ -597,30 +617,30 @@ function s0(tx,ty){
   ctx.drawImage(title,tx>>0,ty>>0,min>>0,min>>0);
   switch(ARType){
     case(1):
-      button(0.1*w,0.55*h,0.8*w,0.3*w,()=>{sb=1});
+      button(0.1*w,0.55*h,0.8*w,0.3*w,()=>{sb=1},play,playb);
       if( window.innerHeight == screen.height) {
-        button(0.84*w,h-0.16*w,0.15*w,0.15*w,()=>{document.exitFullscreen()});
+        button(0.84*w,h-0.16*w,0.15*w,0.15*w,()=>{document.exitFullscreen()},exitFullscreen,exitFullscreenb);
       }
       else{
-        button(0.75*w,h-0.25*w,0.2*w,0.2*w,()=>{document.body.requestFullscreen()});
+        button(0.75*w,h-0.25*w,0.2*w,0.2*w,()=>{document.body.requestFullscreen()},fullscreen,fullscreenb);
       }
     break;
     case(2):
-      button(0.2*w,0.6*h,0.6*w,0.2*w,()=>{sb=1});
+      button(0.2*w,0.6*h,0.6*w,0.2*w,()=>{sb=1},play,playb);
       if( window.innerHeight == screen.height) {
-        button(0.84*w,h-0.16*w,0.15*w,0.15*w,()=>{document.exitFullscreen()});
+        button(0.84*w,h-0.16*w,0.15*w,0.15*w,()=>{document.exitFullscreen()},exitFullscreen,exitFullscreenb);
       }
       else{
-        button(0.82*w,h-0.18*w,0.15*w,0.15*w,()=>{document.body.requestFullscreen()});
+        button(0.82*w,h-0.18*w,0.15*w,0.15*w,()=>{document.body.requestFullscreen()},fullscreen,fullscreenb);
       }
     break;
     case(3):
-      button(0.5*(w-min)+min*0.2,0.6*h,0.6*min,0.2*min,()=>{sb=1});
+      button(0.5*(w-min)+min*0.2,0.6*h,0.6*min,0.2*min,()=>{sb=1},play,playb);
       if( window.innerHeight == screen.height) {
-        button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.exitFullscreen()});
+        button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.exitFullscreen()},exitFullscreen,exitFullscreenb);
       }
       else{
-        button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.body.requestFullscreen()});
+        button(0.89*w,h-0.11*w,0.1*w,0.1*w,()=>{document.body.requestFullscreen()},fullscreen,fullscreenb);
       }
     break;
   }
@@ -635,29 +655,29 @@ function s1(tx,ty){
   switch(ARType){
     case(1):
       if(h/w>1.4){
-        button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
-        button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
+        button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{},left,leftb);
+        button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{},right,rightb);
 
-        button(0,(h-min)*0.25-0.1*w,0.5*w,0.2*w,()=>{sb=0});
+        button(0,(h-min)*0.25-0.1*w,0.5*w,0.2*w,()=>{sb=0},back,backb);
       }
       else{
-        button(0.1*w,h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
-        button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
+        button(0.1*w,h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{},left,leftb);
+        button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{},right,rightb);
 
-        button(0,0,1.25*(h-min),0.5*(h-min),()=>{sb=0});
+        button(0,0,1.25*(h-min),0.5*(h-min),()=>{sb=0},back,backb,right,rightb);
       }
     break;
     case(2):
-      button(w-0.25*h-w/h*(w/h)*100,0,0.14*h,0.14*h,()=>{});
-      button(w-0.14*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{});
+      button(w-0.25*h-w/h*(w/h)*100,0,0.14*h,0.14*h,()=>{},left,leftb);
+      button(w-0.14*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{},right,rightb);
 
-      button(0,0,0.4*h,0.14*h,()=>{sb=0});
+      button(0,0,0.4*h,0.14*h,()=>{sb=0},back,backb);
     break;
     case(3):
-      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{});
-      button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{});
+      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{},left,leftb);
+      button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{},right,rightb);
 
-      button(0,0,0.2*w,0.08*w,()=>{sb=0});
+      button(0,0,0.2*w,0.08*w,()=>{sb=0},back,backb);
     break;
   }
 
@@ -671,32 +691,31 @@ function s1(tx,ty){
           ctx.fillStyle='black';
           lvl=i+j*4+16*levelScreen;
           if(lvl>unlocked){
-            ctx.fillRect((i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
+            ctx.drawImage(lock,(i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
           }
           else{
             onL=levels[lvl];
+            let starImg = current;
             if(onL.best){
               if(onL.best<onL.stepGoals[0]){
-                //image(platinumStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[0]){
-                //image(threeStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars3;
               }
               else if(onL.best<=onL.stepGoals[1]){
-                //image(twoStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars2;
               }
               else{
-                //image(oneStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars1;
               }
-            }
-            else{
-              //image(onImg,i*130+45,j*130+80,120,120);
             }
             button((i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2,()=>{
               sb=2;
               level=i+j*4+16*levelScreen;
               setupLevel(levels[level]);
             });
+            ctx.drawImage(starImg,(i*0.25)*min+1,ty+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
           }
           ctx.fillStyle='white';
           ctx.fillText(lvl<levels.length?levels[lvl].title:"",((i+0.5)*0.25)*min>>0,ty+((j+0.96)*0.25)*min>>0);
@@ -708,31 +727,28 @@ function s1(tx,ty){
 
           if(lvl>unlocked){
             if(w>h*0.85){
-              ctx.fillRect((w-h*0.85)/2+(i*0.25)*(h*0.85)+1,0.15*h+(j*0.25)*(h*0.85)+1,0.25*(h*0.85)-2,0.25*(h*0.85)-2);
+              ctx.drawImage(lock,(w-h*0.85)/2+(i*0.25)*(h*0.85)+1,0.15*h+(j*0.25)*(h*0.85)+1,0.25*(h*0.85)-2,0.25*(h*0.85)-2);
             }
             else{
-              ctx.fillRect((i*0.25)*min+1,0.15*h+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
+              ctx.drawImage(lock,(i*0.25)*min+1,0.15*h+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
             }
-            //image(lockedImg,i*130+45,j*130+80,120,120);
           }
           else{
             onL=levels[lvl];
+            let starImg = current;
             if(onL.best){
               if(onL.best<onL.stepGoals[0]){
-                //image(platinumStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[0]){
-                //image(threeStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars3;
               }
               else if(onL.best<=onL.stepGoals[1]){
-                //image(twoStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars2;
               }
               else{
-                //image(oneStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars1;
               }
-            }
-            else{
-              //image(onImg,i*130+45,j*130+80,120,120);
             }
 
             if(w>h*0.85){
@@ -741,6 +757,7 @@ function s1(tx,ty){
                 level=i+j*4+16*levelScreen;
                 setupLevel(levels[level]);
               });
+              ctx.drawImage(starImg,(w-h*0.85)/2+(i*0.25)*(h*0.85)+1,0.15*h+(j*0.25)*(h*0.85)+1,0.25*(h*0.85)-2,0.25*(h*0.85)-2);
             }
             else{
               button((i*0.25)*min+1,0.15*h+(j*0.25)*min+1,0.25*min-2,0.25*min-2,()=>{
@@ -748,6 +765,7 @@ function s1(tx,ty){
                 level=i+j*4+16*levelScreen;
                 setupLevel(levels[level]);
               });
+              ctx.drawImage(starImg,(i*0.25)*min+1,0.15*h+(j*0.25)*min+1,0.25*min-2,0.25*min-2);
             }
           }
 
@@ -776,33 +794,31 @@ function s1(tx,ty){
           lvl=i+j*4+16*levelScreen;
 
           if(lvl>unlocked){
-            ctx.fillRect(px+(i*0.25)*mn+1,py+(j*0.25)*mn+1,0.25*mn-2,0.25*mn-2);
-            //image(lockedImg,i*130+45,j*130+80,120,120);
+            ctx.drawImage(lock,px+(i*0.25)*mn+1,py+(j*0.25)*mn+1,0.25*mn-2,0.25*mn-2);
           }
           else{
             onL=levels[lvl];
+            let starImg = current;
             if(onL.best){
               if(onL.best<onL.stepGoals[0]){
-                //image(platinumStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[0]){
-                //image(threeStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars3;
               }
               else if(onL.best<=onL.stepGoals[1]){
-                //image(twoStarsImg,i*130+45,j*130+75,120,120);
+                starImg=stars2;
               }
               else{
-                //image(oneStarImg,i*130+45,j*130+75,120,120);
+                starImg=stars1;
               }
-            }
-            else{
-              //image(onImg,i*130+45,j*130+80,120,120);
             }
             button(px+(i*0.25)*mn+1,py+(j*0.25)*mn+1,0.25*mn-1,0.25*mn-2,()=>{
               sb=2;
               level=i+j*4+16*levelScreen;
               setupLevel(levels[level]);
             });
+            ctx.drawImage(starImg,px+(i*0.25)*mn+1,py+(j*0.25)*mn+1,0.25*mn-1,0.25*mn-2);
           }
           ctx.fillStyle='white';
           ctx.fillText(lvl<levels.length?levels[lvl].title:"",px+(i*0.25)*mn+0.125*mn,py+(j*0.25)*mn+0.24*mn);
@@ -824,34 +840,28 @@ function s2(tx,ty){
         ctx.fillText("best: "+levels[level].best,0.5*w,0.25*(h-min)+min/16);
       }
       if(h/w>1.4){
-        //button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
-        //button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{});
-
         if(mobile){
           button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{keyDown({keyCode:90})});
+          ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
         }
         else{
-          button(0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{});
+          button(0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{keys[10]=!keys[10]},grab,grabb);
         }
 
-        button(0.8*w,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{});
-        button(0,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{sb=1});
+        button(0.8*w,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{setupLevel(levels[level])},restart,restartb);
+        button(0,(h-min)*0.25-0.1*w,0.2*w,0.2*w,()=>{sb=1},backMini,backMinib);
       }
       else{
-        //button(0.1*w,h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
-        //button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
-
         if(mobile){
-          button(0.2*w,h-0.5*(h-min),0.8*w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-          button(0,h-0.5*(h-min),0.2*w,0.5*(h-min),()=>{keyDown({keyCode:90})});
+          button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
         }
         else{
-          button(0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{});
+          button(0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{keys[10]=!keys[10]},grab,grabb);
         }
 
-        button(w-0.5*(h-min),0,0.5*(h-min),0.5*(h-min),()=>{});
-        button(0,0,0.5*(h-min),0.5*(h-min),()=>{sb=1});
+        button(w-0.5*(h-min),0,0.5*(h-min),0.5*(h-min),()=>{setupLevel(levels[level])},restart,restartb);
+        button(0,0,0.5*(h-min),0.5*(h-min),()=>{sb=1},backMini,backMinib);
       }
     break;
     case(2):
@@ -859,20 +869,20 @@ function s2(tx,ty){
       ctx.textAlign='left';
       ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.3*w,0.11*h);
 
-      button(w-0.25*h-w/h*(w/h)*50,0,0.14*h,0.14*h,()=>{});
-      button(w-0.13*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{});
+      button(w-0.25*h-w/h*(w/h)*50,0,0.14*h,0.14*h,()=>{keys[10]=!keys[10]},grab,grabb);
+      button(w-0.13*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{setupLevel(levels[level])},restart,restartb);
 
-      button(0,0,0.14*h,0.14*h,()=>{sb=1});
+      button(0,0,0.14*h,0.14*h,()=>{sb=1},backMini,backMinib);
     break;
     case(3):
       ctx.font=(w/20>>0)+"px sans-serif";
       ctx.textAlign='center';
       ctx.fillText(steps+"/"+levels[level].stepGoals[2],0.1*w,0.13*w);
 
-      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{keys[10]=!keys[10]});
-      button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{});
+      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{keys[10]=!keys[10]},grab,grabb);
+      button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{setupLevel(levels[level])},restart,restartb);
 
-      button(0,0,0.2*w,0.08*w,()=>{sb=1});
+      button(0,0,0.2*w,0.08*w,()=>{sb=1},back,backb);
     break;
   }
   drawBoard(levels[level],tx,ty);
