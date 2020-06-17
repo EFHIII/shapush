@@ -3,17 +3,10 @@ TODO:
 graphics:
 asset creation
 - animation stack
-  x rotate player
-  x move player
-  x move block
   - win
-  x toggle grab
 - undo button
-x remove side-stepping
 - add tutorial
-- fix levels
 - add levels
-- stars
 */
 
 //initialize canvas
@@ -55,9 +48,37 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.2.3";
+let version="0.2.4";
 let level=0;
 let levels=[
+  {
+    title:"Objectives",
+    size:{width:5,height:5},
+    start:{x:1,y:1},
+    board:[
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-2],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[4,5,6,7],
+    best:0
+  },
+  {
+    title:"Obstacles",
+    size:{width:5,height:5},
+    start:{x:2,y:1},
+    board:[
+      [[0,-1],[0,-1],[0,-1],[1,-1],[1,-1]],
+      [[0,-1],[0,-1],[0,-1],[1,0],[1,-1]],
+      [[0,-1],[0,-1],[0,-1],[1,-1],[1,-1]],
+      [[0,-1],[0,-1],[0,-1],[1,-2],[1,-1]],
+      [[0,-1],[0,-1],[0,-1],[1,-1],[1,-1]]
+    ],
+    stepGoals:[5,6,7,8],
+    best:0
+  },
   {
     title:"Baby steps",
     size:{width:4,height:4},
@@ -110,19 +131,6 @@ let levels=[
     best:0
   },
   {
-    title:"Grabbing nothing",
-    size:{width:4,height:4},
-    start:{x:2,y:1},
-    board:[
-      [[1,-1],[1,-1],[1,-1],[1,-1]],
-      [[2,-1],[0,-1],[0,-1],[0,-1]],
-      [[2,-1],[3, 1],[0,-1],[4,-2]],
-      [[2,-1],[3, 2],[0,-1],[4, 3]]
-    ],
-    stepGoals:[17,18,20,22],
-    best:0
-  },
-  {
     title:"Move around",
     size:{width:6,height:6},
     start:{x:0,y:0},
@@ -135,20 +143,6 @@ let levels=[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
     ],
     stepGoals:[17,18,20,22],
-    best:0
-  },
-  {
-    title:"U",
-    size:{width:5,height:5},
-    start:{x:2,y:4},
-    board:[
-      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
-      [[2,-1],[2,-1],[3, 2],[3, 1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[3, 0],[0,-1]],
-      [[1,-2],[1,-1],[3,-1],[3,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
-    ],
-    stepGoals:[19,20,21,23],
     best:0
   },
   {
@@ -180,6 +174,46 @@ let levels=[
     best:0
   },
   {
+    title:"On top",
+    size:{width:4,height:4},
+    start:{x:2,y:1},
+    board:[
+      [[1,-1],[1,-1],[1,-1],[1,-1]],
+      [[2,-1],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[3, 1],[0,-1],[4,-2]],
+      [[2,-1],[3, 2],[0,-1],[4, 3]]
+    ],
+    stepGoals:[15,18,20,22],
+    best:0
+  },
+  {
+    title:"U",
+    size:{width:5,height:5},
+    start:{x:2,y:4},
+    board:[
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      [[2,-1],[2,-1],[3, 2],[3, 1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[3, 0],[0,-1]],
+      [[1,-2],[1,-1],[3,-1],[3,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[19,20,21,23],
+    best:0
+  },
+  {
+    title:"Alternatives",
+    size:{width:4,height:4},
+    start:{x:0,y:0},
+    board:[
+      [[0,-1],[0,-1],[1, 3],[1, 0]],
+      [[0,-1],[0,-1],[1,-1],[1,-1]],
+      [[2,-2],[2,-1],[0,-1],[0,-1]],
+      [[2,-1],[2, 3],[0,-1],[0,-1]]
+    ],
+    stepGoals:[13,14,16,17],
+    best:0
+  },
+  {
     title:"Tight spaces",
     size:{width:5,height:5},
     start:{x:0,y:1},
@@ -190,7 +224,21 @@ let levels=[
       [[3, 0],[3,-1],[0,-1],[2,-1],[2,-1]],
       [[3, 2],[0,-1],[0,-1],[2, 1],[0,-1]]
     ],
-    stepGoals:[79,82,88,98],
+    stepGoals:[49,65,80,98],
+    best:0
+  },
+  {
+    title:"Obstacles",
+    size:{width:5,height:5},
+    start:{x:2,y:2},
+    board:[
+      [[4,-1],[4,-2],[0,-1],[3, 2],[0,-1]],
+      [[4, 3],[0,-1],[0,-1],[3,-1],[3,-1]],
+      [[0,-1],[1,-1],[0,-1],[0,-1],[0,-1]],
+      [[1, 0],[1,-1],[0,-1],[2,-1],[2, 1]],
+      [[0,-1],[1,-1],[0,-1],[2,-1],[0,-1]]
+    ],
+    stepGoals:[76,80,84,90],
     best:0
   },
 ];
@@ -498,7 +546,12 @@ function movePlayer(x,y){
     if((keys[32]||keys[10]||keys[13])&&(player.x+fc[0]<0||player.y+fc[1]<0||player.x+fc[0]>=levels[level].size.width||player.y+fc[1]>=levels[level].size.height)){
       ret=true;
     }
-    else if((keys[32]||keys[10]||keys[13])&&(curs[0]===nexs[0]||(fcns[0]===nexs[0]&&(rmp||!curs[0]))||!nexs[0]&&(!curs[0]||rmp))){
+    else if((keys[32]||keys[10]||keys[13])&&(curs[0]===nexs[0]||(fcns[0]===nexs[0]&&(rmp||!curs[0]||!curs[1]))||!nexs[0]&&(!curs[0]||rmp||!curs[1]))){
+      if(rmp&&((fc[0]===x&&fc[1]===y&&curs[0])||nexs[0]===0)){
+        console.log('out');
+          steps--;
+          return true;
+      }
       ret=true;
       if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
         if(fcns[0]>0&&fcns[0]!==curs[0]&&moveBlock(fcns[0],x,y)){
@@ -531,7 +584,10 @@ function movePlayer(x,y){
         return true;
       }
       else if(fcns[0]!==nexs[0]&&fcns[0]!==0){
-        animationQueue.push(['playerPos',player.x+x,player.y+y]);
+        if(fcns[0]===curs[0]){
+          animationQueue.push(['playerPos',player.x+x,player.y+y]);
+        }
+        else{steps--;}
         return true;
       }
     }
@@ -542,8 +598,8 @@ function movePlayer(x,y){
       return;
     }
     if(curs[0]===nexs[0]){
-        animationQueue.push(['playerPos',player.x+x,player.y+y]);
-        return ret;
+      animationQueue.push(['playerPos',player.x+x,player.y+y]);
+      return ret;
     }
     if(nexs[0]>0&&nexs[1]===curs[0]){
       animationQueue.push(['playerPos',player.x+x,player.y+y]);
@@ -552,8 +608,13 @@ function movePlayer(x,y){
     if(curs[0]>0&&nexs[0]===curs[1]){
       animationQueue.push(['playerPos',player.x+x,player.y+y]);
       return ret;
+    }
+    if(curs[1]>0&&curs[1]===nexs[1]){
+      animationQueue.push(['playerPos',player.x+x,player.y+y]);
+      return ret;
+    }
   }
-  }
+  if(keys[32]||keys[10]||keys[13]){steps--;return true;}
   if(ret){steps--;return true;}
 }
 
@@ -655,27 +716,43 @@ function s1(tx,ty){
   switch(ARType){
     case(1):
       if(h/w>1.4){
-        button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{},left,leftb);
-        button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{},right,rightb);
+        if(levelScreen>0){
+          button(0.1*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{levelScreen--;},left,leftb);
+        }
+        if(levelScreen*16+16<levels.length){
+          button(0.7*w,h-((h-min)*0.25+0.1*w),0.2*w,0.2*w,()=>{levelScreen++;},right,rightb);
+        }
 
         button(0,(h-min)*0.25-0.1*w,0.5*w,0.2*w,()=>{sb=0},back,backb);
       }
       else{
-        button(0.1*w,h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{},left,leftb);
-        button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{},right,rightb);
+        if(levelScreen>0){
+          button(0.1*w,h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{levelScreen--;},left,leftb);
+        }
+        if(levelScreen*16+16<levels.length){
+          button(w-w*0.1-0.5*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min),()=>{levelScreen++;},right,rightb);
+        }
 
         button(0,0,1.25*(h-min),0.5*(h-min),()=>{sb=0},back,backb,right,rightb);
       }
     break;
     case(2):
-      button(w-0.25*h-w/h*(w/h)*100,0,0.14*h,0.14*h,()=>{},left,leftb);
-      button(w-0.14*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{},right,rightb);
+      if(levelScreen>0){
+        button(w-0.25*h-w/h*(w/h)*100,0,0.14*h,0.14*h,()=>{levelScreen--;},left,leftb);
+      }
+      if(levelScreen*16+16<levels.length){
+        button(w-0.14*h-w/h*(w/h)*20,0,0.14*h,0.14*h,()=>{levelScreen++;},right,rightb);
+      }
 
       button(0,0,0.4*h,0.14*h,()=>{sb=0},back,backb);
     break;
     case(3):
-      button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{},left,leftb);
-      button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{},right,rightb);
+      if(levelScreen>0){
+        button(0.05*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{levelScreen--;},left,leftb);
+      }
+      if(levelScreen*16+16<levels.length){
+        button(0.85*w,0.5*h-0.05*w,0.1*w,0.1*w,()=>{levelScreen++;},right,rightb);
+      }
 
       button(0,0,0.2*w,0.08*w,()=>{sb=0},back,backb);
     break;
@@ -697,7 +774,10 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<=onL.stepGoals[0]){
+              if(onL.best<onL.stepGoals[0]){
+                starImg=stars5;
+              }
+              else if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[1]){
@@ -737,7 +817,10 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<=onL.stepGoals[0]){
+              if(onL.best<onL.stepGoals[0]){
+                starImg=stars5;
+              }
+              else if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[1]){
@@ -800,7 +883,10 @@ function s1(tx,ty){
             onL=levels[lvl];
             let starImg = current;
             if(onL.best){
-              if(onL.best<=onL.stepGoals[0]){
+              if(onL.best<onL.stepGoals[0]){
+                starImg=stars5;
+              }
+              else if(onL.best<=onL.stepGoals[0]){
                 starImg=stars4;
               }
               else if(onL.best<=onL.stepGoals[1]){

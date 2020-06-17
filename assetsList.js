@@ -31,6 +31,8 @@ stars3.src = 'assets/stars3.png';
 const stars4=new Image();
 stars4.src = 'assets/stars4.png';
 
+const stars5=new Image();
+stars5.src = 'assets/stars5.png';
 
 const current=new Image();
 current.src = 'assets/current.png';
