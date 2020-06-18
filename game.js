@@ -238,7 +238,7 @@ let levels=[
       [[1, 0],[1,-1],[0,-1],[2,-1],[2, 1]],
       [[0,-1],[1,-1],[0,-1],[2,-1],[0,-1]]
     ],
-    stepGoals:[76,80,84,90],
+    stepGoals:[52,74,80,84],
     best:0
   },
 ];
@@ -548,9 +548,8 @@ function movePlayer(x,y){
     }
     else if((keys[32]||keys[10]||keys[13])&&(curs[0]===nexs[0]||(fcns[0]===nexs[0]&&(rmp||!curs[0]||!curs[1]))||!nexs[0]&&(!curs[0]||rmp||!curs[1]))){
       if(rmp&&((fc[0]===x&&fc[1]===y&&curs[0])||nexs[0]===0)){
-        console.log('out');
-          steps--;
-          return true;
+        steps--;
+        return true;
       }
       ret=true;
       if(player.x+fc[0]>=0&&player.y+fc[1]>=0&&player.x+fc[0]<levels[level].size.width&&player.y+fc[1]<levels[level].size.height){
