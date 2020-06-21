@@ -48,7 +48,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.2.6";
+let version="0.3.0";
 let level=0;
 let levels=[
   {
@@ -66,7 +66,7 @@ let levels=[
     best:0
   },
   {
-    title:"Obstacles",
+    title:"First step",
     size:{width:5,height:5},
     start:{x:2,y:1},
     board:[
@@ -80,7 +80,35 @@ let levels=[
     best:0
   },
   {
+    title:"Stepping up",
+    size:{width:5,height:5},
+    start:{x:0,y:1},
+    board:[
+      [[0,-1],[0,-1],[1,-1],[0,-1],[0,-1]],
+      [[0,-1],[1,-1],[1,-1],[2, 0],[0,-1]],
+      [[0,-1],[0,-1],[1,-1],[2,-2],[0,-1]],
+      [[0,-1],[0,-1],[1,-1],[2,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0, 1],[0,-1]]
+    ],
+    stepGoals:[6,8,12,16],
+    best:0
+  },
+  {
     title:"Baby steps",
+    size:{width:5,height:5},
+    start:{x:0,y:1},
+    board:[
+      [[0,-1],[0,-1],[1,-1],[0,-1],[0,-1]],
+      [[0,-1],[1,-2],[1,-1],[2, 0],[0,-1]],
+      [[0,-1],[0,-1],[1,-1],[2,-1],[0,-1]],
+      [[0,-1],[0,-1],[1, 2],[2,-1],[0,-1]],
+      [[0,-1],[0,-1],[0,-1],[0, 1],[0,-1]]
+    ],
+    stepGoals:[14,16,18,21],
+    best:0
+  },
+  {
+    title:"Walking",
     size:{width:4,height:4},
     start:{x:0,y:3},
     board:[
@@ -228,7 +256,7 @@ let levels=[
     best:0
   },
   {
-    title:"Obstacles",
+    title:"Claustrophobic",
     size:{width:5,height:5},
     start:{x:2,y:2},
     board:[
@@ -1160,9 +1188,17 @@ window.onresize = ()=>{
 }
 
 const keyDown=(event)=>{
-  //console.log(event.keyCode);
+  console.log(event.keyCode);
   keys[event.keyCode]=true;
   if(scene===2){
+    if(event.keyCode === 90){
+      undoMove();
+      return;
+    }
+    if(event.keyCode === 82){
+      setupLevel(levels[level]);
+      return;
+    }
     let tempAnimationQueue=JSON.stringify(animationQueue);
     let tempPlayer=JSON.stringify(player);
     let tempGrid=JSON.stringify(gameGrid);
