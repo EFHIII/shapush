@@ -48,7 +48,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.2.5";
+let version="0.2.6";
 let level=0;
 let levels=[
   {
