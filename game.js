@@ -48,7 +48,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.3.0";
+let version="0.3.1";
 let level=0;
 let levels=[
   {
@@ -1188,7 +1188,7 @@ window.onresize = ()=>{
 }
 
 const keyDown=(event)=>{
-  console.log(event.keyCode);
+  //console.log(event.keyCode);
   keys[event.keyCode]=true;
   if(scene===2){
     if(event.keyCode === 90){
@@ -1285,6 +1285,7 @@ window.ontouchstart = (event)=>{
   mouseX=event.touches[0].clientX;
   mouseY=event.touches[0].clientY;
   ltouch=[mouseX,mouseY];
+  mouseIsPressed=true;
 }
 window.ontouchend = (event)=>{
   if(animationQueue.length>0){return}
@@ -1323,11 +1324,12 @@ window.ontouchend = (event)=>{
   mouseX=-1;
   mouseY=-1;
 }
+/*
 window.ontouchcancel = (event)=>{
   mouseX=-1;
   mouseY=-1;
   mouseIsPressed=false;
-}
+}*/
 
 window.ontouchmove = (event) =>{
   if(mouseIsPressed){
