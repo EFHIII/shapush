@@ -48,7 +48,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.3.1";
+let version="0.3.2";
 let level=0;
 let levels=[
   {
@@ -1290,27 +1290,28 @@ window.ontouchstart = (event)=>{
 window.ontouchend = (event)=>{
   if(animationQueue.length>0){return}
   if(scene === 2 && (mouseX-ltouch[0])*(mouseX-ltouch[0])+(mouseY-ltouch[1])*(mouseY-ltouch[1])>200){
+    moveHistory.push(stateString([gameGrid,player.x,player.y,player.facing]));
     if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])<-2){
       if(!movePlayer(-1,0)){
-        if(player.facing===1&&animationQueue.length===0){steps--;}
+        if(player.facing===1&&animationQueue.length===0){steps--;moveHistory.pop();}
         animationQueue.splice(animationQueue.length-1,0,["facing",1]);
       }
     }
     else if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])>2){
       if(!movePlayer(1,0)){
-        if(player.facing===3&&animationQueue.length===0){steps--;}
+        if(player.facing===3&&animationQueue.length===0){steps--;moveHistory.pop();}
         animationQueue.splice(animationQueue.length-1,0,["facing",3]);
       }
     }
     else if((mouseY-ltouch[1])/Math.abs(mouseX-ltouch[0])<-2){
       if(!movePlayer(0,-1)){
-        if(player.facing===2&&animationQueue.length===0){steps--;}
+        if(player.facing===2&&animationQueue.length===0){steps--;moveHistory.pop();}
         animationQueue.splice(animationQueue.length-1,0,["facing",2]);
       }
     }
     else if((mouseY-ltouch[1])/Math.abs(mouseX-ltouch[0])>2){
       if(!movePlayer(0,1)){
-        if(player.facing===0&&animationQueue.length===0){steps--;}
+        if(player.facing===0&&animationQueue.length===0){steps--;moveHistory.pop();}
         animationQueue.splice(animationQueue.length-1,0,["facing",0]);
       }
     }
