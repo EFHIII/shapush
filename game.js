@@ -1289,7 +1289,7 @@ window.ontouchstart = (event)=>{
 }
 window.ontouchend = (event)=>{
   if(animationQueue.length>0){return}
-  if((mouseX-ltouch[0])*(mouseX-ltouch[0])+(mouseY-ltouch[1])*(mouseY-ltouch[1])>200){
+  if(scene === 2 && (mouseX-ltouch[0])*(mouseX-ltouch[0])+(mouseY-ltouch[1])*(mouseY-ltouch[1])>200){
     if((mouseX-ltouch[0])/Math.abs(mouseY-ltouch[1])<-2){
       if(!movePlayer(-1,0)){
         if(player.facing===1&&animationQueue.length===0){steps--;}
