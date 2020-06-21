@@ -1,3 +1,9 @@
+const undo=new Image();
+undo.src = 'assets/undo.png';
+
+const undob=new Image();
+undob.src = 'assets/undob.png';
+
 const grab=new Image();
 grab.src = 'assets/grab.png';
 
