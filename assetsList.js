@@ -1,3 +1,7 @@
+const outside=new Image();
+outside.src = 'assets/outside.png';
+
+
 const undo=new Image();
 undo.src = 'assets/undo.png';
 

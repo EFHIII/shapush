@@ -52,6 +52,20 @@ let version="0.3.2";
 let level=0;
 let levels=[
   {
+    title:"Y",
+    size:{width:5,height:5},
+    start:{x:2,y:1},
+    board:[
+        [[1,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+        [[1, 4],[1, 2],[3,-1],[0,-1],[0,-1]],
+        [[0,-1],[0,-1],[3, 0],[4,-1],[4,-2]],
+        [[2,-1],[2, 3],[3,-1],[4,-1],[0,-1]],
+        [[2,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
+    ],
+    stepGoals:[40,43,46,52],
+    best:0
+  },
+  {
     title:"Objectives",
     size:{width:5,height:5},
     start:{x:1,y:1},
@@ -88,7 +102,7 @@ let levels=[
       [[0,-1],[1,-1],[1,-1],[2, 0],[0,-1]],
       [[0,-1],[0,-1],[1,-1],[2,-2],[0,-1]],
       [[0,-1],[0,-1],[1,-1],[2,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0, 1],[0,-1]]
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
     ],
     stepGoals:[6,8,12,16],
     best:0
@@ -102,7 +116,7 @@ let levels=[
       [[0,-1],[1,-2],[1,-1],[2, 0],[0,-1]],
       [[0,-1],[0,-1],[1,-1],[2,-1],[0,-1]],
       [[0,-1],[0,-1],[1, 2],[2,-1],[0,-1]],
-      [[0,-1],[0,-1],[0,-1],[0, 1],[0,-1]]
+      [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]]
     ],
     stepGoals:[14,16,18,21],
     best:0
@@ -379,7 +393,7 @@ function parseState(str){
 }
 
 let animationQueue=[];
-function animate(){
+function animate(keep){
   if(animationQueue.length<=0){return;}
   switch (animationQueue[0][0]) {
     case('facing'):
@@ -423,7 +437,7 @@ function animate(){
         player.x=animationQueue[0][1];
         player.y=animationQueue[0][2];
         animationQueue.shift();
-        if(gameGrid[player.x][player.y][1]===-2){
+        if(!keep && gameGrid[player.x][player.y][1]===-2){
           beatLevel();
         }
       }
@@ -456,7 +470,7 @@ function animate(){
         player.x=animationQueue[0][1];
         player.y=animationQueue[0][2];
         animationQueue.shift();
-        if(gameGrid[player.x][player.y][1]===-2){
+        if(!keep && gameGrid[player.x][player.y][1]===-2){
           beatLevel();
         }
       };
@@ -486,6 +500,7 @@ function moveBlock(block,x,y){
 
 //game functions
 function setupLevel(L){
+  keys[10]=false;
   moveHistory=[];
   animationQueue=[];
   steps=0;
@@ -695,11 +710,74 @@ function drawBoard(L,tx,ty){
       imageInSquare(groundTile,W*i,H*j,W,H,tx,ty);
     }
   }
+  let tempAnimationQueue=JSON.stringify(animationQueue);
+  let tempPlayer=JSON.stringify(player);
+  let tempGrid=JSON.stringify(gameGrid);
+  let tempSteps=steps;
+  let len=animationQueue.length;
+  while(animationQueue.length>0&&animationQueue.length===len){
+    animate(true);
+  }
+
+  let accessQ=[[player.x>>0,player.y>>0]];
+  let access=[(player.x>>0)+','+(player.y>>0)];
+  const OS=[[0,1],[0,-1],[1,0],[-1,0]];
+  let w=L.size.width,h=L.size.height;
+  let targeta=gameGrid[player.x>>0][player.y>>0][0];
+  let targetb=gameGrid[player.x>>0][player.y>>0][1];
+  while(accessQ.length>0){
+    let p=accessQ.shift();
+
+    for(let i=0;i<4;i++){
+      let X=p[0]+OS[i][0];
+      let Y=p[1]+OS[i][1];
+      if(access.indexOf(X+','+Y)<0 && X>=0 && Y>=0 && X<w && Y<h &&
+      (gameGrid[X][Y][0] === targeta || gameGrid[X][Y][1] === targeta ||
+        (targetb>=0 && (gameGrid[X][Y][0] === targetb || gameGrid[X][Y][1] === targetb) ) ) ){
+        accessQ.push([X,Y]);
+        access.push(X+','+Y);
+      }
+    }
+  }
+
+  animationQueue=JSON.parse(tempAnimationQueue);
+  gameGrid=JSON.parse(tempGrid);
+  player=JSON.parse(tempPlayer);
+
+  for(let i=L.size.width-1;i>=0;i--){
+    for(let j=L.size.height-1;j>=0;j--){
+      if(access.indexOf(i+','+j)<0){
+        imageInSquare(outside,W*i,H*j,W,H,tx,ty);
+      }
+    }
+  }
+
+  if(animationQueue.length>0&&animationQueue[0][0]==='moveBlock'){
+    for(let i=0;i<animationQueue[0][4].length;i++){
+      let good=false;
+      for(let j=0;j<4;j++){
+        if( ( (OS[j][0]!==0 && OS[j][0]!==-animationQueue[0][2]) ||
+              (OS[j][1]!==0 && OS[j][1]!==-animationQueue[0][3]) ) &&
+        access.indexOf((animationQueue[0][2]+animationQueue[0][4][i][0]+OS[j][0])+','+(animationQueue[0][3]+animationQueue[0][4][i][1]+OS[j][1]))){
+          console.log(' - - - '+(animationQueue[0][2]+animationQueue[0][4][i][0]+OS[j][0])+','+(animationQueue[0][3]+animationQueue[0][4][i][1]+OS[j][1]));
+          console.log(OS[j][0]+' - '+animationQueue[0][2]);
+          console.log(OS[j][1]+' - '+animationQueue[0][3]);
+          good=true;
+          j=4;
+        }
+      }
+      if(good){
+        //imageInSquare(groundTile,W*(animationQueue[0][2]+animationQueue[0][4][i][0]),H*(animationQueue[0][3]+animationQueue[0][4][i][1]),W,H,tx,ty);
+      }
+    }
+  }
+
   for(let j=0;j<L.size.height;j++){
     let bots=[];
     for(let i=gameGrid.length-1;i>=0;i--){
       bots.push([]);
     }
+
     for(let i=gameGrid.length-1;i>=0;i--){
       let nd=-1;
       if(animationQueue.length>0&&animationQueue[0][0]==='moveBlock'){
@@ -715,6 +793,9 @@ function drawBoard(L,tx,ty){
             if(animationQueue[0][4][k][2]===-2){
               imageInSquare(goal,W*(i+animationQueue[0][2]*animationQueue[0][5]),H*(j+animationQueue[0][3]*animationQueue[0][5]),W,H,tx,ty);
             }
+            if(animationQueue[0][4][k][2]!==gameGrid[player.x>>0][player.y>>0][0] || (player.x-(i+animationQueue[0][2]*animationQueue[0][5]))+(player.y-(j+animationQueue[0][3]*animationQueue[0][5]))>1.5){
+              imageInSquare(outside,W*(i+animationQueue[0][2]*animationQueue[0][5]),H*(j+animationQueue[0][3]*animationQueue[0][5]),W,H,tx,ty);
+            }
           }
         }
       }
@@ -725,6 +806,9 @@ function drawBoard(L,tx,ty){
         }
         else{
           imageInSquare(tiles[gameGrid[i][j][0]].img,W*i,H*j,W,H,tx,ty);
+        }
+        if(access.indexOf(i+','+j)<0){
+          imageInSquare(outside,W*i,H*j,W,H,tx,ty);
         }
       }
       if(gameGrid[i][j][1]===-2){
@@ -988,10 +1072,10 @@ function s2(tx,ty){
   ctx.fillStyle=colors[0];
   switch(ARType){
     case(1):
-      ctx.font=(min/10>>0)+"px sans-serif";
+      ctx.font=(min/15>>0)+"px sans-serif";
       ctx.textAlign='center';
       //ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.3*w,0.1*(h-min)+min/16);
-      ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.3*w,0.25*(h-min)+(min/10>>0)/5);
+      ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.3*w,0.25*(h-min)+(min/15>>0)/5);
       ctx.font=(min/20>>0)+"px sans-serif";
       for(let i=0;i<4;i++){
         ctx.drawImage(stars[i],(0.4+0.1*i)*w,-0.06*w+0.25*(h-min),0.1*w,0.1*w);
@@ -1000,7 +1084,7 @@ function s2(tx,ty){
 
       if(levels[level].best){
         ctx.font=(min/24>>0)+"px sans-serif";
-        ctx.fillText("best: "+levels[level].best,0.3*w,0.25*(h-min)+(min/10>>0)*0.6);
+        ctx.fillText("best: "+levels[level].best,0.3*w,0.25*(h-min)+(min/15>>0)*0.8);
       }
       if(h/w>1.4){
         //if(mobile){
@@ -1043,7 +1127,7 @@ function s2(tx,ty){
 
       if(levels[level].best){
         ctx.textAlign='left';
-        ctx.font=(min/40>>0)+"px sans-serif";
+        ctx.font=(min/30>>0)+"px sans-serif";
         ctx.fillText("best: "+levels[level].best,0.15*h,0.08*h+(min/14>>0)*0.5);
       }
 
@@ -1119,8 +1203,8 @@ function s2(tx,ty){
       }
     break;
   }
-  drawBoard(levels[level],tx,ty);
   animate();
+  drawBoard(levels[level],tx,ty);
 }
 let scene=0,sb=0;
 const scenes=[s0,s1,s2];
@@ -1188,7 +1272,6 @@ window.onresize = ()=>{
 }
 
 const keyDown=(event)=>{
-  //console.log(event.keyCode);
   keys[event.keyCode]=true;
   if(scene===2){
     if(event.keyCode === 90){
@@ -1199,6 +1282,11 @@ const keyDown=(event)=>{
       setupLevel(levels[level]);
       return;
     }
+    if(event.keyCode === 32 || event.keyCode === 13){
+      keys[10]=false;
+      return;
+    }
+    if(animationQueue.length>4){return;}
     let tempAnimationQueue=JSON.stringify(animationQueue);
     let tempPlayer=JSON.stringify(player);
     let tempGrid=JSON.stringify(gameGrid);
