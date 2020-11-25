@@ -48,7 +48,7 @@ getARType(w/h);
 let levelScreen=0;
 let unlocked=0;
 
-let version="0.3.9";
+let version="0.3.10";
 let level=0;
 let levels=[
   {
@@ -266,7 +266,7 @@ let levels=[
       [[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[4,-1]],
       [[3,-1],[3,-1],[3,-1],[0,-1],[0,-1],[4,3]],
     ],
-    stepGoals:[35,38,42,48],
+    stepGoals:[38,40,44,48],
     best:0
   },
   {
