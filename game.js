@@ -673,6 +673,15 @@ for(var i=0;i<abcLevels.length;i++){
   }
 ];
 */
+function hash(str){
+  var hash = 0, i, chr;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
 let levels = [
   {
     title: "Objectives",
@@ -2441,6 +2450,72 @@ function drawCanvas(t) {
 }
 window.requestAnimationFrame(drawCanvas);
 
+function setCookie(cname, cvalue, exdays) {
+  let d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function saveCookie(){
+  let cookie = [];
+  for(let i = 0; i < levels.length; i++){
+    /*
+    {
+      title: "Objectives",
+      size: { width: 5, height: 5 },
+      start: { x: 1, y: 1 },
+      board: [
+        [[0, -1],[0, -1],[0, -1],[0, -1],[0, -1]],
+        [[0, -1],[0, -1],[0, -1],[0, -1],[0, -1]],
+        [[0, -1],[0, -1],[0, -1],[0, -1],[0, -1]],
+        [[0, -1],[0, -1],[0, -1],[0, -2],[0, -1]],
+        [[0, -1],[0, -1],[0, -1],[0, -1],[0, -1]]
+      ],
+      stepGoals: [4, 5, 6, 7],
+      best: -1
+    }
+    */
+    if(levels[i] && levels[i].best != 0){
+      cookie.push([i,hash(JSON.stringify({t:levels[i].title,s:levels[i].size,x:levels[i].start,b:levels[i].board})),levels[i].best]);
+    }
+  }
+  console.log(JSON.stringify(cookie));
+  setCookie("shapush",JSON.stringify(cookie),365*200);
+}
+
+function loadCookie(){
+  let cookie = getCookie("shapush");
+  if(cookie){
+    try{
+      cookie = JSON.parse(cookie);
+      for(let c = 0; c < cookie.length; c++){
+        let i = cookie[c][0]
+        if(levels[i] && hash(JSON.stringify({t:levels[i].title,s:levels[i].size,x:levels[i].start,b:levels[i].board})) === cookie[c][1]){
+          levels[i].best = cookie[c][2];
+        }
+      }
+    }catch(e){}
+  }
+}
+loadCookie();
+
 //event listeners
 var beatLevel = function() {
   if(levels[level].best < 0 || levels[level].best > steps) {
@@ -2463,6 +2538,7 @@ var beatLevel = function() {
       }
     }
   }
+  saveCookie();
 };
 
 window.onresize = () => {
