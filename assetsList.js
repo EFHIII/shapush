@@ -2,6 +2,25 @@ const outside=new Image();
 outside.src = 'assets/outside.png';
 
 
+const homeImg=new Image();
+homeImg.src = 'assets/home.png';
+
+const hotImg=new Image();
+hotImg.src = 'assets/hot.png';
+
+const abcImg=new Image();
+abcImg.src = 'assets/abc.png';
+
+const plainImg=new Image();
+plainImg.src = 'assets/plain.png';
+
+const duneImg=new Image();
+duneImg.src = 'assets/dune.png';
+
+const artImg=new Image();
+artImg.src = 'assets/art.png';
+
+
 const undo=new Image();
 undo.src = 'assets/undo.png';
 
