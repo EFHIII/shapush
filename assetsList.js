@@ -20,6 +20,9 @@ duneImg.src = 'assets/dune.png';
 const artImg=new Image();
 artImg.src = 'assets/art.png';
 
+const AImg=new Image();
+AImg.src = 'assets/A.png';
+
 
 const undo=new Image();
 undo.src = 'assets/undo.png';
