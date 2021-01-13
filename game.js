@@ -50,7 +50,7 @@ function getARType(AR) {
 }
 getARType(w / h);
 
-let version = "0.4.1";
+let version = "0.4.2";
 let level = 0;
 let abcLevels=[
   [
@@ -478,7 +478,7 @@ abcLevels = [
       best: 0
     },
     {
-      title: "G-13",// puzzle 2312
+      title: "A-13",// puzzle 2312
       size: { width: 5, height: 5 },
       start: { x: 2, y: 2 },
       board: [
@@ -492,7 +492,7 @@ abcLevels = [
       best: 0
     },
     {
-      title: "G-14",// puzzle 2312
+      title: "A-14",// puzzle 2312
       size: { width: 5, height: 5 },
       start: { x: 2, y: 2 },
       board: [
@@ -503,6 +503,34 @@ abcLevels = [
         [[0,-1],[0,-1],[1,-1],[1, 0],[1,-1]],
       ],
       stepGoals: [181, 190, 240, 300],
+      best: 0
+    },
+    {
+      title: "G-15",// puzzle 4336
+      size: { width: 5, height: 5 },
+      start: { x: 2, y: 2 },
+      board: [
+        [[0,-1],[0,-1],[3,-1],[3,-1],[3, 2]],
+        [[0,-1],[2, 1],[0,-1],[5,-2],[0,-1]],
+        [[4,-1],[4, 3],[0,-1],[5,-2],[0,-1]],
+        [[0,-1],[4,-1],[0,-1],[5, 4],[0,-1]],
+        [[0,-1],[0,-1],[1,-1],[1, 0],[1,-1]],
+      ],
+      stepGoals: [185, 195, 240, 300],
+      best: 0
+    },
+    {
+      title: "A-16",// puzzle 8016
+      size: { width: 5, height: 5 },
+      start: { x: 2, y: 2 },
+      board: [
+        [[0,-1],[0,-1],[5,-2],[5, 4],[5,-2]],
+        [[0,-1],[2, 1],[0,-1],[3, 2],[0,-1]],
+        [[4, 3],[4,-1],[0,-1],[3,-1],[0,-1]],
+        [[0,-1],[4,-1],[0,-1],[3,-1],[0,-1]],
+        [[0,-1],[0,-1],[1,-1],[1, 0],[1,-1]],
+      ],
+      stepGoals: [193, 200, 240, 300],
       best: 0
     }
   ],// a
@@ -2258,7 +2286,7 @@ function s2(tx, ty) {
         //  ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
         //}
         //else{
-        button(0.4 * w, h - (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+        //button(0.4 * w, h - (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { keys[10] = !keys[10] }, grab, grabb);
         button(0.8 * w, h - (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { undoMove() }, undo, undob);
         //}
 
@@ -2270,7 +2298,7 @@ function s2(tx, ty) {
         //  ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
         //}
         //else{
-        button(0.5 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { keys[10] = !keys[10] }, grab, grabb);
+        //button(0.5 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { keys[10] = !keys[10] }, grab, grabb);
         button(0.9 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { undoMove() }, undo, undob);
         //}
 
@@ -2341,7 +2369,7 @@ function s2(tx, ty) {
             ctx.font = (w / 50 >> 0) + "px sans-serif";
             ctx.fillText("best: " + levels[level].best, 0.1 * w, 0.13 * w + (w / 20 >> 0) * 0.5);
           }
-          button(0.05 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          //button(0.05 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
         } else {
           ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.1 * w, 0.2 * w);
 
@@ -2356,7 +2384,7 @@ function s2(tx, ty) {
             ctx.font = (w / 50 >> 0) + "px sans-serif";
             ctx.fillText("best: " + levels[level].best, 0.1 * w, 0.21 * w + (w / 50 >> 0) * 0.75);
           }
-          button(0.05 * w, 0.26 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          //button(0.05 * w, 0.26 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
         }
 
         button(0.85 * w, 0, 0.1 * w, 0.1 * w, () => { setupLevel(levels[level]) }, restart, restartb);
@@ -2368,6 +2396,7 @@ function s2(tx, ty) {
   }
   animate();
   drawBoard(levels[level], tx, ty);
+  if(sb != 2){animationQueue = [];}
 }
 let scene = 0,
   sb = 0;
@@ -2427,9 +2456,11 @@ var beatLevel = function() {
   let onL = levelSelect[levelSelectPos.menu].map;
   let dirs = [[0,1],[0,-1],[1,0],[-1,0]];
   for(let i = 0; i < dirs.length; i++){
-    let cOnL = onL[levelSelectPos.y + dirs[i][0]][levelSelectPos.x + dirs[i][1]] - 1;
-    if(cOnL >= 0 && levels[cOnL] && levels[cOnL].best === 0){
-      levels[cOnL].best = -1;
+    if(onL[levelSelectPos.y + dirs[i][0]]){
+      let cOnL = onL[levelSelectPos.y + dirs[i][0]][levelSelectPos.x + dirs[i][1]] - 1;
+      if(cOnL >= 0 && levels[cOnL] && levels[cOnL].best === 0){
+        levels[cOnL].best = -1;
+      }
     }
   }
 };
@@ -2465,20 +2496,22 @@ const keyDown = (event) => {
       case (32): //SPACE
       case (13): //ENTER
       case (16): //SHIFT
-        if(animationQueue.length === 0 && levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x] > 0 && levels[levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x]-1]){
-          sb = 2;
-          level = levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x]-1;
-          setupLevel(levels[level]);
-        }
-        else if(animationQueue.length === 0 && typeof levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x] === "string"){
-          let onL = levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x];
-          if(levelSelect[onL]){
-            levelSelect[levelSelectPos.menu].startX = levelSelectPos.x;
-            levelSelect[levelSelectPos.menu].startY = levelSelectPos.y;
+        if(levelSelectPos.x % 1 == 0 && levelSelectPos.y % 1 == 0){
+          if(animationQueue.length === 0 && levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x] > 0 && levels[levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x]-1]){
+            sb = 2;
+            level = levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x]-1;
+            setupLevel(levels[level]);
+          }
+          else if(animationQueue.length === 0 && typeof levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x] === "string"){
+            let onL = levelSelect[levelSelectPos.menu].map[levelSelectPos.y][levelSelectPos.x];
+            if(levelSelect[onL]){
+              levelSelect[levelSelectPos.menu].startX = levelSelectPos.x;
+              levelSelect[levelSelectPos.menu].startY = levelSelectPos.y;
 
-            levelSelectPos.menu = onL;
-            levelSelectPos.x = levelSelect[onL].startX;
-            levelSelectPos.y = levelSelect[onL].startY;
+              levelSelectPos.menu = onL;
+              levelSelectPos.x = levelSelect[onL].startX;
+              levelSelectPos.y = levelSelect[onL].startY;
+            }
           }
         }
         break;
