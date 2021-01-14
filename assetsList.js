@@ -1,6 +1,9 @@
 const outside=new Image();
 outside.src = 'assets/outside.png';
 
+const blankImg=new Image();
+blankImg.src = 'assets/blank.png';
+
 
 const homeImg=new Image();
 homeImg.src = 'assets/home.png';
@@ -22,6 +25,9 @@ artImg.src = 'assets/art.png';
 
 const AImg=new Image();
 AImg.src = 'assets/A.png';
+
+const BImg=new Image();
+BImg.src = 'assets/B.png';
 
 
 const undo=new Image();

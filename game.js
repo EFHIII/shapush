@@ -50,7 +50,7 @@ function getARType(AR) {
 }
 getARType(w / h);
 
-let version = "0.4.3";
+let version = "0.6.0";
 let level = 0;
 let abcLevels=[
   [
@@ -2264,11 +2264,53 @@ function s1(tx, ty) {
     }
   }
 
-  ctx.drawImage(fullscreen,
-    px + ((levelSelectPos.x * blockSize) + blockSize * 0.05) * mn,
-    py + ((levelSelectPos.y * blockSize) + blockSize * 0.05) * mn,
-    blockSize * 0.9 * mn,
-    blockSize * 0.9 * mn);
+  if(!mobile){
+    ctx.drawImage(fullscreen,
+      px + ((levelSelectPos.x * blockSize) + blockSize * 0.05) * mn,
+      py + ((levelSelectPos.y * blockSize) + blockSize * 0.05) * mn,
+      blockSize * 0.9 * mn,
+      blockSize * 0.9 * mn);
+  }
+
+
+  for(let i = cm.length - 1; i >= 0; i--) {
+    for(let j = cm.length - 1; j >= 0; j--) {
+      if(cm[i][j] > 0 && levels[cm[i][j]-1] && levels[cm[i][j]-1].best != 0){
+        let myI = j;
+        let myJ = i;
+        let lvl = cm[i][j] - 1;
+        button(px + (myI * blockSize) * mn,
+          py + (myJ * blockSize) * mn,
+          blockSize * mn,
+          blockSize * mn, () => {
+            sb = 2;
+            levelSelectPos.x = myI;
+            levelSelectPos.y = myJ;
+            level = lvl;
+            setupLevel(levels[level]);
+          }, blankImg, blankImg);
+
+      }
+      else if(typeof cm[i][j] === "string"){
+        let onL = cm[i][j];
+        if(levelSelect[onL]){
+          let myI = j;
+          let myJ = i;
+          button(px + (myI * blockSize) * mn,
+            py + (myJ * blockSize) * mn,
+            blockSize * mn,
+            blockSize * mn, () => {
+              levelSelect[levelSelectPos.menu].startX = myI;
+              levelSelect[levelSelectPos.menu].startY = myJ;
+
+              levelSelectPos.menu = onL;
+              levelSelectPos.x = levelSelect[onL].startX;
+              levelSelectPos.y = levelSelect[onL].startY;
+            }, blankImg, blankImg);
+        }
+      }
+    }
+  }
 }
 
 function s2(tx, ty) {
@@ -2290,10 +2332,10 @@ function s2(tx, ty) {
         ctx.fillText("best: " + levels[level].best, 0.3 * w, 0.25 * (h - min) + (min / 15 >> 0) * 0.8);
       }
       if(h / w > 1.4) {
-        //if(mobile){
-        //  button(w,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-        //  ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
-        //}
+        if(mobile){
+          button(w,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          ctx.drawImage(grab,0.4*w,h-(h-min)*0.25-0.1*w,0.2*w,0.2*w);
+        }
         //else{
         //button(0.4 * w, h - (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { keys[10] = !keys[10] }, grab, grabb);
         button(0.8 * w, h - (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { undoMove() }, undo, undob);
@@ -2302,10 +2344,10 @@ function s2(tx, ty) {
         button(0.8 * w, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { setupLevel(levels[level]) }, restart, restartb);
         button(0, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { sb = 1 }, backMini, backMinib);
       } else {
-        //if(mobile){
-        //button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
-        //  ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
-        //}
+        if(mobile){
+          button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
+        }
         //else{
         //button(0.5 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { keys[10] = !keys[10] }, grab, grabb);
         button(0.9 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { undoMove() }, undo, undob);
@@ -2378,7 +2420,9 @@ function s2(tx, ty) {
             ctx.font = (w / 50 >> 0) + "px sans-serif";
             ctx.fillText("best: " + levels[level].best, 0.1 * w, 0.13 * w + (w / 20 >> 0) * 0.5);
           }
-          //button(0.05 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          if(mobile){
+            button(0.05 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          }
         } else {
           ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.1 * w, 0.2 * w);
 
@@ -2393,7 +2437,9 @@ function s2(tx, ty) {
             ctx.font = (w / 50 >> 0) + "px sans-serif";
             ctx.fillText("best: " + levels[level].best, 0.1 * w, 0.21 * w + (w / 50 >> 0) * 0.75);
           }
-          //button(0.05 * w, 0.26 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          if(mobile){
+            button(0.05 * w, 0.26 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
+          }
         }
 
         button(0.85 * w, 0, 0.1 * w, 0.1 * w, () => { setupLevel(levels[level]) }, restart, restartb);
