@@ -50,7 +50,7 @@ function getARType(AR) {
 }
 getARType(w / h);
 
-let version = "0.6.1";
+let version = "0.6.2";
 let level = 0;
 let abcLevels=[
   [
@@ -2348,13 +2348,15 @@ function s2(tx, ty) {
         button(0, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { sb = 1 }, backMini, backMinib);
       } else {
         if(mobile){
-          button(0,h-0.5*(h-min),w,0.5*(h-min),()=>{keys[10]=!keys[10]});
+          button(0,h-0.5*(h-min),w*0.8,0.5*(h-min),()=>{keys[10]=!keys[10]});
           ctx.drawImage(grab,0.5*w-0.25*(h-min),h-0.5*(h-min),0.5*(h-min),0.5*(h-min));
+          button(0.8 * w, h - 0.5 * (h - min), 0.2*w, 0.5*(h-min), () => { undoMove() });
+          ctx.drawImage(undo,0.9 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min));
         }
-        //else{
+        else{
         //button(0.5 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { keys[10] = !keys[10] }, grab, grabb);
         button(0.9 * w - 0.25 * (h - min), h - 0.5 * (h - min), 0.5 * (h - min), 0.5 * (h - min), () => { undoMove() }, undo, undob);
-        //}
+        }
 
         button(w - 0.5 * (h - min), 0, 0.5 * (h - min), 0.5 * (h - min), () => { setupLevel(levels[level]) }, restart, restartb);
         button(0, 0, 0.5 * (h - min), 0.5 * (h - min), () => { sb = 1 }, backMini, backMinib);
