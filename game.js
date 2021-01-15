@@ -3452,6 +3452,9 @@ function loadCookie(){
   }
 }
 loadCookie();
+if(!useCookies){
+  document.getElementById("msg-wrapper").style.display = 'block';
+}
 
 //event listeners
 var beatLevel = function() {
