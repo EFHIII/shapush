@@ -729,7 +729,7 @@ function s2(tx, ty) {
         }
 
         button(0.8 * w, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { setupLevel(levels[level]) }, restart, restartb);
-        button(0, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { sb = 1 }, backMini, backMinib);
+        //button(0, (h - min) * 0.25 - 0.1 * w, 0.2 * w, 0.2 * w, () => { sb = 1 }, backMini, backMinib);
       } else {
         if(mobile){
           button(0,h-0.5*(h-min),w*0.8,0.5*(h-min),()=>{keys[10]=!keys[10]});
@@ -743,7 +743,7 @@ function s2(tx, ty) {
         }
 
         button(w - 0.5 * (h - min), 0, 0.5 * (h - min), 0.5 * (h - min), () => { setupLevel(levels[level]) }, restart, restartb);
-        button(0, 0, 0.5 * (h - min), 0.5 * (h - min), () => { sb = 1 }, backMini, backMinib);
+        //button(0, 0, 0.5 * (h - min), 0.5 * (h - min), () => { sb = 1 }, backMini, backMinib);
       }
       break;
     case (2):
@@ -767,7 +767,7 @@ function s2(tx, ty) {
       button(w - 0.25 * h - w / h * (w / h) * 50, 0, 0.14 * h, 0.14 * h, () => { undoMove() }, undo, undob);
       button(w - 0.13 * h - w / h * (w / h) * 20, 0, 0.14 * h, 0.14 * h, () => { setupLevel(levels[level]) }, restart, restartb);
 
-      button(0, 0, 0.14 * h, 0.14 * h, () => { sb = 1 }, backMini, backMinib);
+      //button(0, 0, 0.14 * h, 0.14 * h, () => { sb = 1 }, backMini, backMinib);
       break;
     case (3):
       if(w / h > 2.6) {
@@ -788,7 +788,7 @@ function s2(tx, ty) {
           //ctx.fillText(levels[level].stepGoals[3 - i], SZ * (i + 0.5) + 0.5 * w + 0.5 * h, SZ);
         }
 
-        button(0.5 * w - h, 0, 0.5 * h, 0.2 * h, () => { sb = 1 }, back, backb);
+        //button(0.5 * w - h, 0, 0.5 * h, 0.2 * h, () => { sb = 1 }, back, backb);
         button(0.5 * w + 0.75 * h, 0.5 * h - 0.125 * h, 0.25 * h, 0.25 * h, () => { setupLevel(levels[level]) }, restart, restartb);
         button(0.5 * w + 0.5 * h, 0.5 * h - 0.125 * h, 0.25 * h, 0.25 * h, () => { undoMove() }, undo, undob);
       } else {
@@ -834,7 +834,7 @@ function s2(tx, ty) {
         button(0.85 * w, 0, 0.1 * w, 0.1 * w, () => { setupLevel(levels[level]) }, restart, restartb);
         button(0.85 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { undoMove() }, undo, undob);
 
-        button(0, 0, 0.2 * w, 0.08 * w, () => { sb = 1 }, back, backb);
+        //button(0, 0, 0.2 * w, 0.08 * w, () => { sb = 1 }, back, backb);
       }
       break;
   }
