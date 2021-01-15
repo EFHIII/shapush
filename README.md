@@ -9,5 +9,4 @@ GPU Accelerated and CPU multithreaded puzzle generator: https://github.com/EFHII
 
 TODO:
 - button to clear progress
-- cookie warning (for legal reasons)
 - levels
