@@ -64,7 +64,7 @@ function getARType(AR) {
 }
 getARType(w / h);
 
-let version = "0.6.4";
+let version = "0.6.5";
 let level = 0;
 let abcLevels=[
   [
