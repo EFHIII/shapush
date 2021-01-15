@@ -8,6 +8,12 @@ asset creation
 - add tutorial
 - add levels
 */
+let useCookies = false;
+
+function cook(v){
+  useCookies = v;
+  document.getElementById("msg-wrapper").style.display = 'none';
+}
 
 //initialize canvas
 const c = document.getElementById("canvas");
@@ -3395,6 +3401,7 @@ function getCookie(cname) {
 }
 
 function saveCookie(){
+  if(!useCookies){return;}
   let cookie = [];
   for(let i = 0; i < levels.length; i++){
     /*
@@ -3417,7 +3424,7 @@ function saveCookie(){
       cookie.push([i,hash(JSON.stringify({t:levels[i].title,s:levels[i].size,x:levels[i].start,b:levels[i].board})),levels[i].best]);
     }
   }
-  console.log(JSON.stringify(cookie));
+  //console.log(JSON.stringify(cookie));
   setCookie("shapush",JSON.stringify(cookie),365*200);
 }
 

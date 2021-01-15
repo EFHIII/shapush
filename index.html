@@ -6,6 +6,8 @@
     <meta
       name='viewport'
       content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
     <style media="screen">
       html, body {
         padding: 0;
@@ -33,9 +35,59 @@
         user-select: none;
         -webkit-tap-highlight-color: rgba(0,0,0,0)
       }
+
+      p, button {
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      button {
+        background-color: white;
+        border: none;
+        color: black;
+        padding:  0.3em 1em;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        outline:none;
+        transition: 0.2s;
+      }
+      button:hover {
+        background-color: skyblue;
+        cursor: pointer;
+      }
+
+
+      #msg-wrapper {
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 1em;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        overflow: auto;
+      }
+
+      #msg-content {
+        text-align: center;
+        background-color: #fefe30;
+        margin: auto;
+        padding: 0.2em;
+        width: 80%;
+      }
     </style>
   </head>
   <body unselectable="on">
+    <div id="msg-wrapper">
+      <div id="msg-content">
+        <p id = "message">Would you like your progress to be automatically saved via cookies?&nbsp;&nbsp;&nbsp; <button onclick="cook(true)">Yes</button>&nbsp;&nbsp;<button onclick="cook(false)">No</button></p>
+      </div>
+    </div>
     <canvas id="canvas"></canvas>
     <script src="assetsList.js" type="text/javascript"></script>
     <script src="game.js" type="text/javascript"></script>
