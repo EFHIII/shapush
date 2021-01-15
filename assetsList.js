@@ -29,6 +29,9 @@ AImg.src = 'assets/A.png';
 const BImg=new Image();
 BImg.src = 'assets/B.png';
 
+const CImg=new Image();
+CImg.src = 'assets/C.png';
+
 
 const undo=new Image();
 undo.src = 'assets/undo.png';
