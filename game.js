@@ -9,6 +9,14 @@ asset creation
 - add levels
 */
 let useCookies = false;
+let showAccess = true;
+
+(new URL(window.location.href)).searchParams.forEach((val, term) =>{
+  switch(term.toLowerCase()){
+    case "showaccess":
+      showAccess = val.toLowerCase() == "true";
+    break;
+  }});
 
 function cook(v){
   useCookies = v;
@@ -2671,7 +2679,7 @@ function drawBoard(L, tx, ty) {
   for(let i = L.size.width - 1; i >= 0; i--) {
     for(let j = L.size.height - 1; j >= 0; j--) {
       if(access.indexOf(i + ',' + j) < 0) {
-        imageInSquare(outside, W * i, H * j, W, H, tx, ty);
+        if(showAccess){imageInSquare(outside, W * i, H * j, W, H, tx, ty);}
       }
     }
   }
@@ -2717,7 +2725,7 @@ function drawBoard(L, tx, ty) {
               imageInSquare(goal, W * (i + animationQueue[0][2] * animationQueue[0][5]), H * (j + animationQueue[0][3] * animationQueue[0][5]), W, H, tx, ty);
             }
             if(animationQueue[0][4][k][2] !== gameGrid[player.x >> 0][player.y >> 0][0] || (player.x - (i + animationQueue[0][2] * animationQueue[0][5])) + (player.y - (j + animationQueue[0][3] * animationQueue[0][5])) > 1.5) {
-              imageInSquare(outside, W * (i + animationQueue[0][2] * animationQueue[0][5]), H * (j + animationQueue[0][3] * animationQueue[0][5]), W, H, tx, ty);
+              if(showAccess){imageInSquare(outside, W * (i + animationQueue[0][2] * animationQueue[0][5]), H * (j + animationQueue[0][3] * animationQueue[0][5]), W, H, tx, ty);}
             }
           }
         }
@@ -2730,7 +2738,7 @@ function drawBoard(L, tx, ty) {
           imageInSquare(tiles[gameGrid[i][j][0]].img, W * i, H * j, W, H, tx, ty);
         }
         if(access.indexOf(i + ',' + j) < 0) {
-          imageInSquare(outside, W * i, H * j, W, H, tx, ty);
+          if(showAccess){imageInSquare(outside, W * i, H * j, W, H, tx, ty);}
         }
       }
       if(gameGrid[i][j][1] === -2) {
