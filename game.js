@@ -3431,6 +3431,7 @@ function saveCookie(){
 function loadCookie(){
   let cookie = getCookie("shapush");
   if(cookie){
+    cook(true);
     try{
       cookie = JSON.parse(cookie);
       for(let c = 0; c < cookie.length; c++){
