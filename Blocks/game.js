@@ -3020,7 +3020,6 @@ var beatLevel = function() {
       }
     }
   }
-  saveCookie();
 };
 
 function checkBeaten(){
@@ -3128,11 +3127,8 @@ window.onkeyup = (event) => {
   keys[event.keyCode] = false;
 }
 
-window.onmousemove = (event) => {
-  if(!mobile || mouseIsPressed) {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-  }
+function moveStuff(){
+
   if(scene === 2 && moveBlockn){
     let tmp = [
       (mouseX-moveBlockFrom[0])/boardB[2]*levels[level].board.length,
@@ -3188,8 +3184,15 @@ window.onmousemove = (event) => {
   }
 }
 
-window.onmousedown = (event) => {
-  //console.log(boardB);
+window.onmousemove = (event) => {
+  if(!mobile || mouseIsPressed) {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+  }
+  moveStuff();
+}
+
+function startMoving(){
   if(scene != 2){return;}
   var cs=[((mouseX-boardB[0])/(boardB[2]/gameGrid.length))>>0,((mouseY-boardB[1])/(boardB[2]/gameGrid.length))>>0];
   if(cs[0] >= 0 && cs[0] < gameGrid[0].length && cs[1] >= 0 && cs[1] < gameGrid[0].length){
@@ -3197,6 +3200,11 @@ window.onmousedown = (event) => {
     moveBlockFrom = [mouseX, mouseY];
     movedBlockp = [0,0];
   }
+}
+
+window.onmousedown = (event) => {
+  //console.log(boardB);
+  startMoving();
 }
 
 
@@ -3228,6 +3236,7 @@ window.ontouchstart = (event) => {
   mouseY = event.touches[0].clientY;
   ltouch = [mouseX, mouseY];
   mouseIsPressed = true;
+  startMoving();
 }
 window.ontouchend = (event) => {
   if(animationQueue.length > 0) { return }
@@ -3243,6 +3252,13 @@ window.ontouchend = (event) => {
   last = true;
   mouseX = -1;
   mouseY = -1;
+
+  moveBlockn = 0;
+  if(scene == 2){
+    if(checkBeaten()){
+      beatLevel();
+    }
+  }
 }
 /*
 window.ontouchcancel = (event)=>{
@@ -3256,6 +3272,7 @@ window.ontouchmove = (event) => {
     mouseX = event.touches[0].clientX;
     mouseY = event.touches[0].clientY;
   }
+  moveStuff();
 };
 
 document.addEventListener('contextmenu', event => event.preventDefault());
