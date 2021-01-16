@@ -2557,14 +2557,13 @@ let levelSelect = {
   "start": {
     map: [
       //["art", 0, "abc", 0, "expert"],
-      [0, 0, 0, 0, 0],
-      [0, 6, 8, 9, -1],
-      [0, 3, 4, 7, 0],
-      [0, 1, 2, 5, 0],
-      [0, -1, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 1, 2, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
     ],
     startX: 1,
-    startY: 4
+    startY: 1
   },
 
   "A": {
@@ -2677,7 +2676,7 @@ for(var i=0;i<26;i++){
 }
 
 
-let levelSelectPos = { menu: "start", x: 1, y: 4 };
+let levelSelectPos = { menu: "start", x: 1, y: 1 };
 
 function miniTile(img, mn, px, py, W, H, blockSize, i, j, k, l){
   ctx.drawImage(img,
