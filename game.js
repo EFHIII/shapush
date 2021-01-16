@@ -2622,7 +2622,7 @@ function undoMove() {
     player.x = state[1];
     player.y = state[2];
     player.facing = state[3];
-    steps--;
+    steps = moveHistory.length;
   }
 }
 

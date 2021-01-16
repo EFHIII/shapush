@@ -504,13 +504,12 @@ function movePlayer(x, y) {
 
 function undoMove() {
   if(animationQueue.length === 0 && moveHistory.length > 0) {
-    movesMade.pop();
     let state = parseState(moveHistory.pop());
     gameGrid = state[0];
     player.x = state[1];
     player.y = state[2];
     player.facing = state[3];
-    steps--;
+    steps = moveHistory.length;
   }
 }
 
