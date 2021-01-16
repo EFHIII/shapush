@@ -898,8 +898,8 @@ var beatLevel = function() {
   //sb = 1;
   let mm = compress(movesMade);
   if(!beat){
-  document.getElementById('message').innerText = "CONGRATS! You solved the puzzle in " + movesMade.length + " moves!\n" +
-  "Message EFHIII#0462 on Discord with the following code to claim your prize!\nCODE: " + mm;
+  document.getElementById('message').innerText = "CONGRATS! You solved the puzzle in " + movesMade.length + " moves!\n" + //"Message EFHIII#0462 on Discord with the following code to claim your prize!" +
+  "\nCODE: " + mm;
   document.getElementById("msg-wrapper").style.display = "block";
     showAccess = false;
   }
