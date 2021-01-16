@@ -2213,8 +2213,7 @@ let levels = [
   ...abcLevels.flat(),
 ];
 
-let steps = 0,
-  counter = 0;
+let counter = 0;
 let gameGrid = [];
 let player = { x: 0, y: 0, facing: 0 };
 
@@ -2425,7 +2424,6 @@ function setupLevel(L) {
   keys[10] = false;
   moveHistory = [];
   animationQueue = [];
-  steps = 0;
   gameGrid = [];
   player.x = L.start.x;
   player.y = L.start.y;
@@ -2520,7 +2518,6 @@ function drawPlayer(x, y, facing, W, H, tx, ty, playerImg) {
 }
 
 function movePlayer(x, y) {
-  steps++;
   let ret = false;
   let curs = gameGrid[player.x][player.y];
   let nexs = [0, 0];
@@ -2551,7 +2548,6 @@ function movePlayer(x, y) {
       ret = true;
     } else if((keys[32] || keys[16] || keys[10] || keys[13]) && (curs[0] === nexs[0] || (fcns[0] === nexs[0] && (rmp || !curs[0] || !curs[1])) || !nexs[0] && (!curs[0] || rmp || !curs[1]))) {
       if(rmp && ((fc[0] === x && fc[1] === y && curs[0]) || nexs[0] === 0)) {
-        steps--;
         return true;
       }
       ret = true;
@@ -2561,7 +2557,6 @@ function movePlayer(x, y) {
           return true;
         }
         if(fcns[0] !== curs[0] && fcns[0] !== 0) {
-          steps--;
           return true;
         }
       }
@@ -2571,7 +2566,6 @@ function movePlayer(x, y) {
         return true;
       }
       if(fcns[0] !== curs[0] && fcns[0] !== 0) {
-        steps--;
         return true;
       }
     } else if((keys[32] || keys[16] || keys[10] || keys[13]) && curs[0] > 0 && nexs[0] === curs[1]) {
@@ -2584,14 +2578,14 @@ function movePlayer(x, y) {
       } else if(fcns[0] !== nexs[0] && fcns[0] !== 0) {
         if(fcns[0] === curs[0]) {
           animationQueue.push(['playerPos', player.x + x, player.y + y]);
-        } else { steps--; }
+        }
         return true;
       }
     }
     if(keys[32] || keys[16] || keys[10] || keys[13]) { ret = true; }
     if(player.x + x < 0 || player.x + x >= levels[level].size.width ||
       player.y + y < 0 || player.y + y >= levels[level].size.height) {
-      if(ret) { steps--; return true; }
+      if(ret) { return true; }
       return;
     }
     if(curs[0] === nexs[0]) {
@@ -2611,8 +2605,8 @@ function movePlayer(x, y) {
       return ret;
     }
   }
-  if(keys[32] || keys[16] || keys[10] || keys[13]) { steps--; return true; }
-  if(ret) { steps--; return true; }
+  if(keys[32] || keys[16] || keys[10] || keys[13]) { return true; }
+  if(ret) { return true; }
 }
 
 function undoMove() {
@@ -2622,7 +2616,6 @@ function undoMove() {
     player.x = state[1];
     player.y = state[2];
     player.facing = state[3];
-    steps--;
   }
 }
 
@@ -2637,7 +2630,7 @@ function drawBoard(L, tx, ty) {
   let tempAnimationQueue = JSON.stringify(animationQueue);
   let tempPlayer = JSON.stringify(player);
   let tempGrid = JSON.stringify(gameGrid);
-  let tempSteps = steps;
+  let tempSteps = moveHistory.length;
   let len = animationQueue.length;
   while(animationQueue.length > 0 && animationQueue.length === len) {
     animate(true);
@@ -3204,7 +3197,7 @@ function s2(tx, ty) {
       ctx.font = (min / 15 >> 0) + "px sans-serif";
       ctx.textAlign = 'center';
       //ctx.fillText(steps+"/"+levels[level].stepGoals[3],0.3*w,0.1*(h-min)+min/16);
-      ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.3 * w, 0.25 * (h - min) + (min / 15 >> 0) / 5);
+      ctx.fillText(moveHistory.length + "/" + levels[level].stepGoals[3], 0.3 * w, 0.25 * (h - min) + (min / 15 >> 0) / 5);
       ctx.font = (min / 20 >> 0) + "px sans-serif";
       for(let i = 0; i < 4; i++) {
         ctx.drawImage(stars[i], (0.4 + 0.1 * i) * w, -0.06 * w + 0.25 * (h - min), 0.1 * w, 0.1 * w);
@@ -3249,7 +3242,7 @@ function s2(tx, ty) {
     case (2):
       ctx.font = (min / 14 >> 0) + "px sans-serif";
       ctx.textAlign = 'left';
-      ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.15 * h, 0.08 * h);
+      ctx.fillText(moveHistory.length + "/" + levels[level].stepGoals[3], 0.15 * h, 0.08 * h);
 
       ctx.font = (0.03 * w * w / h >> 0) + "px sans-serif";
       ctx.textAlign = 'center';
@@ -3273,7 +3266,7 @@ function s2(tx, ty) {
       if(w / h > 2.6) {
         ctx.font = (h / 8 >> 0) + "px sans-serif";
         ctx.textAlign = 'right';
-        ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.5 * (w - h), 0.2 * h + h / 8);
+        ctx.fillText(moveHistory.length + "/" + levels[level].stepGoals[3], 0.5 * (w - h), 0.2 * h + h / 8);
 
         if(levels[level].best > 0) {
           ctx.font = (h / 20 >> 0) + "px sans-serif";
@@ -3297,7 +3290,7 @@ function s2(tx, ty) {
 
         let SZ = Math.min(w * 0.15, (h - (0.6 * w)) * 0.8);
         if(SZ >= 0.05 * w) {
-          ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.1 * w, 0.13 * w);
+          ctx.fillText(moveHistory.length + "/" + levels[level].stepGoals[3], 0.1 * w, 0.13 * w);
 
           ctx.font = (SZ / 3 >> 0) + "px sans-serif";
           for(let i = 0; i < 4; i++) {
@@ -3313,7 +3306,7 @@ function s2(tx, ty) {
             button(0.05 * w, 0.5 * h - 0.05 * w, 0.1 * w, 0.1 * w, () => { keys[10] = !keys[10] }, grab, grabb);
           }
         } else {
-          ctx.fillText(steps + "/" + levels[level].stepGoals[3], 0.1 * w, 0.2 * w);
+          ctx.fillText(moveHistory.length + "/" + levels[level].stepGoals[3], 0.1 * w, 0.2 * w);
 
           SZ = 0.05 * w;
           ctx.font = (SZ / 3 >> 0) + "px sans-serif";
@@ -3458,10 +3451,10 @@ if(!useCookies){
 
 //event listeners
 var beatLevel = function() {
-  if(levels[level].best < 0 || levels[level].best > steps) {
-    levels[level].best = steps ? steps : levels[level].stepGoals[3];
+  if(levels[level].best < 0 || levels[level].best > moveHistory.length) {
+    levels[level].best = moveHistory.length ? moveHistory.length : levels[level].stepGoals[3];
   }
-  if(levels[level].stepGoals[3] - steps < 0) {
+  if(levels[level].stepGoals[3] - moveHistory.length < 0) {
     setupLevel(levels[level]);
     return;
   }
@@ -3551,49 +3544,47 @@ const keyDown = (event) => {
     let tempAnimationQueue = JSON.stringify(animationQueue);
     let tempPlayer = JSON.stringify(player);
     let tempGrid = JSON.stringify(gameGrid);
-    let tempSteps = steps;
+    let tempSteps = animationQueue.length;
     while(animationQueue.length > 0) {
       animate(true);
     }
-    if(tempSteps > 0 && steps === 0) {
+    if(tempSteps > 0 && moveHistory.length === 0) {
       animationQueue = JSON.parse(tempAnimationQueue).concat(animationQueue);
       gameGrid = JSON.parse(tempGrid);
       player = JSON.parse(tempPlayer);
-      steps = tempSteps;
       return;
     }
     switch (event.keyCode) {
       case (37): //LEFT_ARROW
       case (65):
         if(!movePlayer(-1, 0)) {
-          if(player.facing === 1 && animationQueue.length === 0) { steps--; }
           animationQueue.unshift(["facing", 1]);
         }
         break;
       case (39): //RIGHT_ARROW
       case (68):
         if(!movePlayer(1, 0)) {
-          if(player.facing === 3 && animationQueue.length === 0) { steps--; }
           animationQueue.unshift(["facing", 3]);
         }
         break;
       case (38): //UP_ARROW
       case (87):
         if(!movePlayer(0, -1)) {
-          if(player.facing === 2 && animationQueue.length === 0) { steps--; }
           animationQueue.unshift(["facing", 2]);
         }
         break;
       case (40): //DOWN_ARROW
       case (83):
         if(!movePlayer(0, 1)) {
-          if(player.facing === 0 && animationQueue.length === 0) { steps--; }
           animationQueue.unshift(["facing", 0]);
         }
         break;
     }
-    if(steps > tempSteps) {
-      moveHistory.push(stateString([gameGrid, player.x, player.y, player.facing]));
+    if(animationQueue.length > tempSteps) {
+      let ss = stateString([gameGrid, player.x, player.y, player.facing]);
+      if(moveHistory[moveHistory.length-1] != ss){
+        moveHistory.push(ss);
+      }
     }
     animationQueue = JSON.parse(tempAnimationQueue).concat(animationQueue);
     gameGrid = JSON.parse(tempGrid);
@@ -3639,29 +3630,36 @@ window.ontouchstart = (event) => {
 window.ontouchend = (event) => {
   if(animationQueue.length > 0) { return }
   if(scene === 2 && (mouseX - ltouch[0]) * (mouseX - ltouch[0]) + (mouseY - ltouch[1]) * (mouseY - ltouch[1]) > 200) {
-    moveHistory.push(stateString([gameGrid, player.x, player.y, player.facing]));
+    let ss = stateString([gameGrid, player.x, player.y, player.facing]);
+    if(moveHistory[moveHistory.length-1] != ss){
+      moveHistory.push(ss);
+    }
     if((mouseX - ltouch[0]) / Math.abs(mouseY - ltouch[1]) < -2) {
       if(!movePlayer(-1, 0)) {
-        if(player.facing === 1 && animationQueue.length === 0) { steps--;
-          moveHistory.pop(); }
+        if(player.facing === 1 && animationQueue.length === 0) {
+          moveHistory.pop();
+        }
         animationQueue.splice(animationQueue.length - 1, 0, ["facing", 1]);
       }
     } else if((mouseX - ltouch[0]) / Math.abs(mouseY - ltouch[1]) > 2) {
       if(!movePlayer(1, 0)) {
-        if(player.facing === 3 && animationQueue.length === 0) { steps--;
-          moveHistory.pop(); }
+        if(player.facing === 3 && animationQueue.length === 0) {
+          moveHistory.pop();
+        }
         animationQueue.splice(animationQueue.length - 1, 0, ["facing", 3]);
       }
     } else if((mouseY - ltouch[1]) / Math.abs(mouseX - ltouch[0]) < -2) {
       if(!movePlayer(0, -1)) {
-        if(player.facing === 2 && animationQueue.length === 0) { steps--;
-          moveHistory.pop(); }
+        if(player.facing === 2 && animationQueue.length === 0) {
+          moveHistory.pop();
+        }
         animationQueue.splice(animationQueue.length - 1, 0, ["facing", 2]);
       }
     } else if((mouseY - ltouch[1]) / Math.abs(mouseX - ltouch[0]) > 2) {
       if(!movePlayer(0, 1)) {
-        if(player.facing === 0 && animationQueue.length === 0) { steps--;
-          moveHistory.pop(); }
+        if(player.facing === 0 && animationQueue.length === 0) {
+          moveHistory.pop();
+        }
         animationQueue.splice(animationQueue.length - 1, 0, ["facing", 0]);
       }
     }
