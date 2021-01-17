@@ -1,3 +1,7 @@
+const target=new Image();
+target.src = '../assets/target.png';
+
+
 const outside=new Image();
 outside.src = '../assets/outside.png';
 
