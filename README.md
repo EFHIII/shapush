@@ -9,3 +9,8 @@ Discuss on Discord: https://discord.gg/sp3b2Ky
 TODO:
 - button to clear progress
 - levels
+  - difficulty curve
+- tutorial
+- better assets
+- rework level progression
+- make completion = 1 star instead of failing
