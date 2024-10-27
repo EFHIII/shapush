@@ -438,7 +438,7 @@ function s0(tx, ty) {
   ctx.font = (0.03 * min >> 0) + "px sans-serif";
   ctx.fillText("v" + version, 0.05 * w, h - 0.01 * min);
   ctx.textAlign = 'center';
-  ctx.fillText("By Edward Haas @efhiii", w / 2, h - 0.01 * min);
+  ctx.fillText("By Freddy Haas @efhiii", w / 2, h - 0.01 * min);
 }
 
 let warpImages = {
